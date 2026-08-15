@@ -7,6 +7,7 @@ interface NavbarProps {
   setActiveTab: (tab: 'dashboard' | 'projects' | 'articles' | 'settings') => void;
   onNewProject: () => void;
   onNewArticle: () => void;
+  onLogout?: () => void;
 }
 
 export const Navbar: React.FC<NavbarProps> = ({
@@ -14,6 +15,7 @@ export const Navbar: React.FC<NavbarProps> = ({
   setActiveTab,
   onNewProject,
   onNewArticle,
+  onLogout,
 }) => {
   return (
     <header className="sticky top-0 z-50 bg-[#FEFAF9]/90 backdrop-blur-md border-b border-[#E8E3E1] px-4 md:px-8 py-3.5">
@@ -114,21 +116,29 @@ export const Navbar: React.FC<NavbarProps> = ({
             )}
           </button>
 
-          {/* Quick Create Buttons */}
+          {/* Quick Create & Logout Buttons */}
           <div className="flex items-center gap-2">
             <button
               onClick={onNewProject}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#a52f18] hover:bg-[#8b2612] text-[#FEFAF9] rounded-xl text-xs font-medium shadow-sm transition-all active:scale-95"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#a52f18] hover:bg-[#8b2612] text-[#FEFAF9] rounded-xl text-xs font-medium shadow-sm transition-all active:scale-95 cursor-pointer"
             >
               <Sparkles className="w-3.5 h-3.5" />
               <span>+ Proyecto</span>
             </button>
             <button
               onClick={onNewArticle}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-[#F5EFEF] text-[#000000] rounded-xl text-xs font-medium border border-[#E8E3E1] transition-all active:scale-95 shadow-sm"
+              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-[#F5EFEF] text-[#000000] rounded-xl text-xs font-medium border border-[#E8E3E1] transition-all active:scale-95 shadow-sm cursor-pointer"
             >
               <span>+ Artículo</span>
             </button>
+            {onLogout && (
+              <button
+                onClick={onLogout}
+                className="flex items-center gap-1.5 px-3 py-1.5 bg-black hover:bg-[#a52f18] text-white rounded-xl text-xs font-medium transition-all active:scale-95 shadow-sm cursor-pointer border border-transparent"
+              >
+                Salir
+              </button>
+            )}
           </div>
         </div>
 

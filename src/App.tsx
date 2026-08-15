@@ -15,9 +15,11 @@ import { ProjectEditor } from './pages/ProjectEditor';
 import { ArticlesManager } from './pages/ArticlesManager';
 import { ArticleEditor } from './pages/ArticleEditor';
 import { Settings } from './pages/Settings';
+import { Login } from './pages/Login';
 import { Loader2 } from 'lucide-react';
 
 export function App() {
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [activeTab, setActiveTab] = useState<'dashboard' | 'projects' | 'articles' | 'settings' | 'project-editor' | 'article-editor'>('dashboard');
   
   const [projects, setProjects] = useState<WorkCase[]>([]);
@@ -26,6 +28,14 @@ export function App() {
 
   const [editingProject, setEditingProject] = useState<WorkCase | null>(null);
   const [editingArticle, setEditingArticle] = useState<CraftLabArticle | null>(null);
+
+  // Check login session on mount
+  useEffect(() => {
+    const session = localStorage.getItem('craftstudio_crm_session');
+    if (session === 'active') {
+      setIsAuthenticated(true);
+    }
+  }, []);
 
   const loadData = async () => {
     setLoading(true);
@@ -97,6 +107,16 @@ export function App() {
     await loadData();
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('craftstudio_crm_session');
+    localStorage.removeItem('craftstudio_crm_user');
+    setIsAuthenticated(false);
+  };
+
+  if (!isAuthenticated) {
+    return <Login onLoginSuccess={() => setIsAuthenticated(true)} />;
+  }
+
   return (
     <div className="min-h-screen bg-[#FEFAF9] text-[#000000] font-sans flex flex-col selection:bg-[#a52f18] selection:text-[#FEFAF9]">
       {/* Analog Grain Overlay */}
@@ -116,6 +136,7 @@ export function App() {
         }}
         onNewProject={handleOpenNewProject}
         onNewArticle={handleOpenNewArticle}
+        onLogout={handleLogout}
       />
 
       {/* Main Container */}
