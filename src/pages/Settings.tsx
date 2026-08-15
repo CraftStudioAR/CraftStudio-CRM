@@ -61,15 +61,15 @@ CREATE TABLE IF NOT EXISTS craft_lab_articles (
   updated_at TIMESTAMPTZ DEFAULT NOW()
 );
 
--- 3. Habilitar RLS y lecturas/escrituras públicas
+-- 3. Habilitar RLS
 ALTER TABLE projects ENABLE ROW LEVEL SECURITY;
 ALTER TABLE craft_lab_articles ENABLE ROW LEVEL SECURITY;
 
 CREATE POLICY "Lectura pública de proyectos" ON projects FOR SELECT USING (true);
-CREATE POLICY "Escritura de proyectos" ON projects FOR ALL USING (true);
+CREATE POLICY "Escritura autorizada de proyectos" ON projects FOR ALL TO authenticated USING (true) WITH CHECK (true);
 
 CREATE POLICY "Lectura pública de craft_lab_articles" ON craft_lab_articles FOR SELECT USING (true);
-CREATE POLICY "Escritura de craft_lab_articles" ON craft_lab_articles FOR ALL USING (true);
+CREATE POLICY "Escritura autorizada de craft_lab_articles" ON craft_lab_articles FOR ALL TO authenticated USING (true) WITH CHECK (true);
 `;
 
   const handleCopySql = () => {

@@ -6,7 +6,9 @@ import {
   deleteProject, 
   fetchArticles, 
   saveArticle, 
-  deleteArticle 
+  deleteArticle,
+  supabase,
+  isSupabaseConfigured
 } from './lib/supabase';
 import { Navbar } from './components/Navbar';
 import { Dashboard } from './pages/Dashboard';
@@ -31,10 +33,23 @@ export function App() {
 
   // Check login session on mount
   useEffect(() => {
-    const session = localStorage.getItem('craftstudio_crm_session');
-    if (session === 'active') {
-      setIsAuthenticated(true);
-    }
+    const checkSession = async () => {
+      if (isSupabaseConfigured && supabase) {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session) {
+          setIsAuthenticated(true);
+        } else {
+          localStorage.removeItem('craftstudio_crm_session');
+          setIsAuthenticated(false);
+        }
+      } else {
+        const session = localStorage.getItem('craftstudio_crm_session');
+        if (session === 'active') {
+          setIsAuthenticated(true);
+        }
+      }
+    };
+    checkSession();
   }, []);
 
   const loadData = async () => {
@@ -107,7 +122,10 @@ export function App() {
     await loadData();
   };
 
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    if (isSupabaseConfigured && supabase) {
+      await supabase.auth.signOut();
+    }
     localStorage.removeItem('craftstudio_crm_session');
     localStorage.removeItem('craftstudio_crm_user');
     setIsAuthenticated(false);

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { Database, Lock, Mail, AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { supabase, isSupabaseConfigured } from '../lib/supabase';
 
 interface LoginProps {
   onLoginSuccess: () => void;
@@ -17,21 +18,55 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
     setError(null);
     setLoading(true);
 
-    // Short artificial delay for realistic premium feel
-    await new Promise((resolve) => setTimeout(resolve, 800));
-
     const targetEmail = 'hola@craftstudio.com.ar';
     const targetPassword = 'CraftStudio1!';
+    const inputEmail = email.toLowerCase().trim();
 
-    if (email.toLowerCase().trim() === targetEmail && password === targetPassword) {
-      // Save session locally
-      localStorage.setItem('craftstudio_crm_session', 'active');
-      localStorage.setItem('craftstudio_crm_user', email);
-      onLoginSuccess();
-    } else {
-      setError('Credenciales inválidas. Verificá el usuario y la contraseña.');
+    // 1. Enforce that only the target email is allowed
+    if (inputEmail !== targetEmail) {
+      setError('Usuario no autorizado.');
+      setLoading(false);
+      return;
     }
-    setLoading(false);
+
+    try {
+      if (isSupabaseConfigured && supabase) {
+        // 2. Authenticate using Supabase Auth (Secure remote backend validation)
+        const { data, error: authError } = await supabase.auth.signInWithPassword({
+          email: inputEmail,
+          password: password,
+        });
+
+        if (authError) {
+          setError(authError.message === 'Invalid login credentials' 
+            ? 'Contraseña incorrecta. Verificá tus credenciales en Supabase.' 
+            : `Error de Supabase: ${authError.message}`
+          );
+          setLoading(false);
+          return;
+        }
+
+        if (data.session) {
+          localStorage.setItem('craftstudio_crm_session', 'active');
+          localStorage.setItem('craftstudio_crm_user', inputEmail);
+          onLoginSuccess();
+        }
+      } else {
+        // 3. Fallback for Local Mode (LocalStorage)
+        if (password === targetPassword) {
+          localStorage.setItem('craftstudio_crm_session', 'active');
+          localStorage.setItem('craftstudio_crm_user', inputEmail);
+          onLoginSuccess();
+        } else {
+          setError('Contraseña incorrecta para el modo local.');
+        }
+      }
+    } catch (err: any) {
+      console.error('Error during authentication:', err);
+      setError(err?.message || 'Ocurrió un error inesperado al iniciar sesión.');
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -97,7 +132,7 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl pl-10 pr-10 py-2.5 text-xs text-[#000000] focus:border-[#a52f18] outline-none transition-all placeholder-[#999999]"
+                  className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl pl-10 pr-10 py-2.5 text-[#000000] focus:border-[#a52f18] outline-none transition-all placeholder-[#999999] text-xs"
                 />
                 <button
                   type="button"
@@ -112,12 +147,18 @@ export const Login: React.FC<LoginProps> = ({ onLoginSuccess }) => {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 bg-[#a52f18] hover:bg-[#8b2612] disabled:opacity-50 text-[#FEFAF9] rounded-xl text-xs font-bold shadow-sm transition-all active:scale-[0.98] select-none uppercase tracking-widest mt-2"
+              className="w-full py-3 bg-[#a52f18] hover:bg-[#8b2612] disabled:opacity-50 text-[#FEFAF9] rounded-xl text-xs font-bold shadow-sm transition-all active:scale-[0.98] select-none uppercase tracking-widest mt-2 cursor-pointer"
             >
               {loading ? 'Iniciando Sesión...' : 'Entrar al Panel'}
             </button>
           </form>
         </div>
+
+        {isSupabaseConfigured && (
+          <div className="mt-4 p-3 bg-emerald-50/50 border border-emerald-100 rounded-xl text-center text-[10px] text-emerald-800">
+            🔒 Autenticación protegida por base de datos (Supabase Auth).
+          </div>
+        )}
 
         <p className="text-center text-[10px] text-[#999999] mt-6 leading-relaxed">
           Propiedad exclusiva de Craft Studio. Todos los derechos reservados.
