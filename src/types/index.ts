@@ -93,6 +93,7 @@ export type CraftLabArticle = {
   desc: string;
   aspect?: string;
   content: string;
+  blocks?: ProjectBlock[];
   created_at?: string;
   updated_at?: string;
 };

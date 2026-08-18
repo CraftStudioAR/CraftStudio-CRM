@@ -135,7 +135,10 @@ export async function fetchArticles(): Promise<CraftLabArticle[]> {
         .order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        return data;
+        return data.map((item) => ({
+          ...item,
+          blocks: typeof item.blocks === 'string' ? JSON.parse(item.blocks) : item.blocks || [],
+        }));
       }
     } catch (e) {
       console.warn('Supabase fetch articles failed, falling back to LocalStorage', e);
@@ -159,6 +162,7 @@ export async function saveArticle(article: CraftLabArticle): Promise<{ success: 
         desc: article.desc,
         aspect: article.aspect || 'aspect-[4/5]',
         content: article.content,
+        blocks: article.blocks || [],
         updated_at: new Date().toISOString(),
       };
 
@@ -256,6 +260,7 @@ export async function seedSupabase(): Promise<{ success: boolean; error?: string
         desc: article.desc,
         aspect: article.aspect || 'aspect-[4/5]',
         content: article.content,
+        blocks: (article as any).blocks || [],
         updated_at: new Date().toISOString(),
       };
 

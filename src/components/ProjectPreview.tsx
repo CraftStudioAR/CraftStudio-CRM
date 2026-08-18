@@ -167,7 +167,7 @@ function Testimonial({ quote, author, role }: { quote: string; author: string; r
 // ─────────────────────────────────────────────
 // Block renderer — copia exacta de ProjectBlocks.tsx
 // ─────────────────────────────────────────────
-function Block({ block }: { block: ProjectBlock }) {
+export function Block({ block }: { block: ProjectBlock }) {
   switch (block.type) {
     case 'image':
       return <Img publicId={block.image.publicId} alt={block.image.alt} />;

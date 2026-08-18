@@ -11,6 +11,8 @@ import {
 } from 'lucide-react';
 import { getImageUrl } from '../lib/cloudinary';
 import { ImageUploader } from '../components/ImageUploader';
+import { BlockBuilder } from '../components/BlockBuilder';
+import { Block } from '../components/ProjectPreview';
 
 interface ArticleEditorProps {
   initialArticle?: CraftLabArticle | null;
@@ -33,6 +35,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
     desc: '',
     aspect: 'aspect-[4/5]',
     content: '',
+    blocks: [],
   });
 
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
@@ -170,9 +173,17 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
             </div>
           )}
 
-          <div className="prose max-w-none text-[#000000] text-base md:text-lg leading-relaxed space-y-4 whitespace-pre-line font-serif">
-            {formData.content || 'El contenido del artículo aparecerá aquí...'}
-          </div>
+          {formData.blocks && formData.blocks.length > 0 ? (
+            <div className="flex flex-col gap-6 md:gap-10 mt-8">
+              {formData.blocks.map((block, index) => (
+                <Block key={index} block={block} />
+              ))}
+            </div>
+          ) : (
+            <div className="prose max-w-none text-[#000000] text-base md:text-lg leading-relaxed space-y-4 whitespace-pre-line font-serif">
+              {formData.content || 'El contenido del artículo aparecerá aquí...'}
+            </div>
+          )}
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -279,6 +290,20 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
                 onChange={(e) => setFormData({ ...formData, content: e.target.value })}
                 placeholder="Escribí aquí el cuerpo completo del ensayo..."
                 className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3.5 py-2.5 text-xs text-[#000000] outline-none font-serif text-base leading-relaxed resize-y"
+              />
+            </div>
+
+            <div className="border-t border-[#E8E3E1] pt-6 space-y-4">
+              <h4 className="text-sm font-semibold text-[#000000] flex items-center gap-2">
+                <Sparkles className="w-4 h-4 text-[#a52f18]" />
+                Maquetador de Bloques del Artículo
+              </h4>
+              <p className="text-xs text-[#666666]">
+                Agrega y ordena bloques visuales (imágenes destacadas, columnas, testimonios o citas) para diseñar la estructura interna del artículo.
+              </p>
+              <BlockBuilder
+                blocks={formData.blocks || []}
+                onChange={(newBlocks) => setFormData({ ...formData, blocks: newBlocks })}
               />
             </div>
 
