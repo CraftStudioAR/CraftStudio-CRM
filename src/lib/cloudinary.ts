@@ -2,7 +2,7 @@
  * Cloudinary & Image URL Utilities
  */
 
-const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'craftstudio';
+const CLOUDINARY_CLOUD_NAME = import.meta.env.VITE_CLOUDINARY_CLOUD_NAME || 'kre7pjni';
 
 /**
  * Returns a full display URL for an image.
