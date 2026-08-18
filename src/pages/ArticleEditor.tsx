@@ -10,6 +10,7 @@ import {
   AlertCircle 
 } from 'lucide-react';
 import { getImageUrl } from '../lib/cloudinary';
+import { ImageUploader } from '../components/ImageUploader';
 
 interface ArticleEditorProps {
   initialArticle?: CraftLabArticle | null;
@@ -234,23 +235,11 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
               </div>
 
               <div className="space-y-2">
-                <label className="block text-xs font-medium text-[#666666]">Imagen de Portada (Public ID o URL)</label>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="text"
-                    value={formData.image}
-                    onChange={(e) => setFormData({ ...formData, image: e.target.value })}
-                    placeholder="ej: /images/lab1.jpg ó Cloudinary ID"
-                    className="flex-1 bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3.5 py-2.5 text-xs text-[#000000] outline-none"
-                  />
-                  {formData.image && (
-                    <img
-                      src={getImageUrl(formData.image)}
-                      alt="Preview"
-                      className="w-10 h-10 rounded-lg object-cover bg-white border border-[#E8E3E1]"
-                    />
-                  )}
-                </div>
+                <ImageUploader
+                  value={formData.image}
+                  onChange={(newId) => setFormData({ ...formData, image: newId })}
+                  label="Imagen de Portada (Public ID o URL)"
+                />
               </div>
 
               <div>

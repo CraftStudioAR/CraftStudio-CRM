@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { WorkCase, ProjectBlock } from '../types';
 import { BlockBuilder } from '../components/BlockBuilder';
 import { ProjectPreview, CoverCardPreview } from '../components/ProjectPreview';
+import { ImageUploader } from '../components/ImageUploader';
 import { 
   ArrowLeft, 
   Save, 
@@ -235,19 +236,16 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
 
               {/* Cover Image Picker */}
               <div className="md:col-span-2 space-y-3">
-                <label className="block text-xs font-medium text-[#666666]">Imagen de Portada (Cover)</label>
                 <div className="flex flex-col sm:flex-row gap-5 items-start">
                   {/* Inputs */}
                   <div className="flex-1 space-y-2">
-                    <input
-                      type="text"
+                    <ImageUploader
                       value={formData.cover?.publicId || ''}
-                      onChange={(e) => setFormData({
+                      onChange={(newId) => setFormData({
                         ...formData,
-                        cover: { publicId: e.target.value, alt: formData.cover?.alt || formData.client }
+                        cover: { publicId: newId, alt: formData.cover?.alt || formData.client }
                       })}
-                      placeholder="Cloudinary Public ID (ej: 8_am0iqp)"
-                      className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3.5 py-2.5 text-xs text-[#000000] font-mono focus:border-[#a52f18] outline-none"
+                      label="Imagen de Portada (Cover)"
                     />
                     <input
                       type="text"

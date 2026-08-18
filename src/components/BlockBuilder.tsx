@@ -29,6 +29,7 @@ import {
   Move,
 } from 'lucide-react';
 import { getImageUrl } from '../lib/cloudinary';
+import { ImageUploader } from './ImageUploader';
 
 interface BlockBuilderProps {
   blocks: ProjectBlock[];
@@ -112,31 +113,18 @@ const ImageInputGroup = ({
   image: ProjectImage;
   onChange: (img: ProjectImage) => void;
 }) => (
-  <div className="p-3 bg-[#FEFAF9] rounded-xl border border-[#E8E3E1] space-y-2">
-    <div className="flex items-center gap-2">
-      <img
-        src={getImageUrl(image.publicId)}
-        alt={image.alt}
-        className="w-10 h-10 object-cover rounded-lg bg-[#E8E3E1] border border-[#E8E3E1] flex-shrink-0"
-        onError={(e) => {
-          (e.target as HTMLImageElement).src = 'data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect fill="%23E8E3E1" width="40" height="40"/><text x="50%" y="55%" text-anchor="middle" fill="%23aaa" font-size="8">IMG</text></svg>';
-        }}
-      />
-      <span className="text-xs font-semibold text-[#000]">{label}</span>
-    </div>
-    <input
-      type="text"
+  <div className="space-y-2">
+    <ImageUploader
       value={image.publicId}
-      onChange={(e) => onChange({ ...image, publicId: e.target.value })}
-      placeholder="Cloudinary Public ID"
-      className="w-full bg-white border border-[#E8E3E1] rounded-lg px-2.5 py-1.5 text-xs text-[#000] font-mono outline-none focus:border-[#a52f18]"
+      onChange={(newId) => onChange({ ...image, publicId: newId })}
+      label={label}
     />
     <input
       type="text"
       value={image.alt}
       onChange={(e) => onChange({ ...image, alt: e.target.value })}
-      placeholder="Texto alternativo (alt)"
-      className="w-full bg-white border border-[#E8E3E1] rounded-lg px-2.5 py-1.5 text-xs text-[#000] outline-none focus:border-[#a52f18]"
+      placeholder="Texto alternativo de la imagen (alt)..."
+      className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none focus:border-[#a52f18]"
     />
   </div>
 );
