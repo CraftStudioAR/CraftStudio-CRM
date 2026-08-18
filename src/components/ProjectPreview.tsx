@@ -24,11 +24,13 @@ function Img({
   alt,
   aspect,
   className = '',
+  imgClassName = '',
 }: {
   publicId: string;
   alt: string;
   aspect?: string;    // CSS aspect-ratio value, e.g. "4 / 5"
   className?: string;
+  imgClassName?: string;
 }) {
   return (
     <div className={`block w-full overflow-hidden rounded-2xl ${className}`}>
@@ -36,7 +38,7 @@ function Img({
         src={getImageUrl(publicId)}
         alt={alt}
         style={aspect ? { aspectRatio: aspect, objectFit: 'cover', width: '100%' } : undefined}
-        className="w-full"
+        className={`w-full rounded-2xl ${imgClassName}`}
       />
     </div>
   );
@@ -172,8 +174,8 @@ function Block({ block }: { block: ProjectBlock }) {
 
     case 'imageFeature':
       return (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-6">
-          <Img publicId={block.main.publicId} alt={block.main.alt} />
+        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-6 items-stretch">
+          <Img publicId={block.main.publicId} alt={block.main.alt} className="h-full" imgClassName="h-full object-cover" />
           <div className="grid grid-cols-2 gap-3 self-start md:grid-cols-1 md:gap-6">
             {block.stacked.map((img, i) => (
               <Img key={i} publicId={img.publicId} alt={img.alt} />
