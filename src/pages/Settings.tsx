@@ -4,7 +4,6 @@ import {
   Database, 
   CheckCircle2, 
   RefreshCw,
-  Sparkles,
   AlertTriangle,
   Server
 } from 'lucide-react';
@@ -117,8 +116,8 @@ export const Settings: React.FC<SettingsProps> = ({ onRefreshData }) => {
       {/* Info Section */}
       <div className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-2xl p-6 md:p-8 space-y-4 shadow-sm">
         <h3 className="text-sm font-semibold text-[#000000] flex items-center gap-2">
-          <Sparkles className="w-4 h-4 text-[#a52f18]" />
-          Acerca de la sincronización de contenidos
+          <Database className="w-4 h-4 text-[#a52f18]" />
+          Acerca de la Sincronización de contenidos
         </h3>
         <p className="text-xs text-[#666666] leading-relaxed">
           Los contenidos que agregues o edites desde este CRM (proyectos del portafolio y artículos de Craft Lab) se guardan de forma instantánea y segura. Para cambiar la portada de la web o modificar secciones estáticas internas, ponte en contacto con el equipo de soporte técnico.

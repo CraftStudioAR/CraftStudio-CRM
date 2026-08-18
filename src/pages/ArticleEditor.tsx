@@ -5,9 +5,10 @@ import {
   Save, 
   Eye, 
   Edit, 
-  Sparkles, 
   CheckCircle, 
-  AlertCircle 
+  AlertCircle,
+  BookOpen,
+  Layers
 } from 'lucide-react';
 import { getImageUrl } from '../lib/cloudinary';
 import { ImageUploader } from '../components/ImageUploader';
@@ -244,7 +245,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
           <div className="bg-white border border-[#E8E3E1] rounded-2xl p-6 space-y-6 shadow-sm">
             
             <h3 className="text-sm font-semibold text-[#000000] border-b border-[#E8E3E1] pb-3 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#a52f18]" />
+              <BookOpen className="w-4 h-4 text-[#a52f18]" />
               Detalles de la Publicación Craft Lab
             </h3>
 
@@ -349,7 +350,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
             <div className="border-t border-[#E8E3E1] pt-6 space-y-4">
               <h4 className="text-sm font-semibold text-[#000000] flex items-center gap-2">
-                <Sparkles className="w-4 h-4 text-[#a52f18]" />
+                <Layers className="w-4 h-4 text-[#a52f18]" />
                 Maquetador de Bloques del Artículo
               </h4>
               <p className="text-xs text-[#666666]">

@@ -20,7 +20,6 @@ import {
   Quote,
   BarChart3,
   MessageSquare,
-  Sparkles,
   Copy,
   AlignLeft,
   AlignCenter,
@@ -299,7 +298,7 @@ export const BlockBuilder: React.FC<BlockBuilderProps> = ({ blocks, onChange }) 
       <div className="space-y-3">
         {blocks.length === 0 ? (
           <div className="border border-dashed border-[#E8E3E1] rounded-2xl p-8 text-center bg-[#FEFAF9]">
-            <Sparkles className="w-8 h-8 text-[#a52f18] mx-auto mb-2 opacity-60" />
+            <LayoutList className="w-8 h-8 text-[#a52f18] mx-auto mb-2 opacity-60" />
             <p className="text-sm text-[#000000] font-medium">Aún no hay bloques</p>
             <p className="text-xs text-[#666666] mt-1 max-w-md mx-auto">
               Seleccioná un tipo de bloque abajo para comenzar a construir el proyecto.
@@ -449,7 +448,7 @@ const BlockTypeBadge: React.FC<{ type: ProjectBlock['type'] }> = ({ type }) => {
     testimonial: { label: 'Testimonio', color: 'bg-[#a52f18]/10 text-[#a52f18] border-[#a52f18]/20', icon: MessageSquare },
   };
 
-  const config = configs[type] || { label: type, color: 'bg-gray-50 text-gray-700 border-gray-200', icon: Sparkles };
+  const config = configs[type] || { label: type, color: 'bg-gray-50 text-gray-700 border-gray-200', icon: LayoutList };
   const Icon = config.icon;
 
   return (

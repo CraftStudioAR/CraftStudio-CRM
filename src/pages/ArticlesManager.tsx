@@ -6,7 +6,6 @@ import {
   Edit3, 
   Trash2, 
   BookOpen, 
-  Sparkles, 
   Check, 
   Calendar 
 } from 'lucide-react';
@@ -103,7 +102,7 @@ export const ArticlesManager: React.FC<ArticlesManagerProps> = ({
       {/* Articles Grid */}
       {filteredArticles.length === 0 ? (
         <div className="border border-dashed border-[#E8E3E1] rounded-2xl p-12 text-center bg-white">
-          <Sparkles className="w-8 h-8 text-[#999999] mx-auto mb-3 opacity-60" />
+          <BookOpen className="w-8 h-8 text-[#999999] mx-auto mb-3 opacity-60" />
           <h3 className="text-sm font-semibold text-[#000000]">No se encontraron artículos</h3>
           <p className="text-xs text-[#666666] mt-1">Prueba cambiando el término de búsqueda.</p>
         </div>

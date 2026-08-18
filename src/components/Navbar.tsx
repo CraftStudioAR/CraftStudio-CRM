@@ -1,5 +1,5 @@
 import React from 'react';
-import { LayoutDashboard, FolderKanban, BookOpen, Settings, Sparkles, Database, ShieldAlert } from 'lucide-react';
+import { LayoutDashboard, FolderKanban, BookOpen, Settings, Database, ShieldAlert, Plus } from 'lucide-react';
 import { isSupabaseConfigured } from '../lib/supabase';
 
 interface NavbarProps {
@@ -120,21 +120,19 @@ export const Navbar: React.FC<NavbarProps> = ({
           <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               onClick={onNewProject}
-              className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 bg-[#a52f18] hover:bg-[#8b2612] text-[#FEFAF9] rounded-xl text-xs font-semibold shadow-sm transition-all active:scale-95 cursor-pointer"
+              className="hidden md:flex items-center gap-1.5 px-3.5 py-1.5 bg-[#a52f18] hover:bg-[#8b2612] text-[#FEFAF9] rounded-xl text-xs font-semibold shadow-sm transition-all active:scale-95 cursor-pointer"
               title="Nuevo Proyecto"
             >
-              <Sparkles className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">+ Proyecto</span>
-              <span className="sm:hidden text-[10px]">+ Proy</span>
+              <Plus className="w-3.5 h-3.5" />
+              <span>+ Proyecto</span>
             </button>
             <button
               onClick={onNewArticle}
-              className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 bg-white hover:bg-[#F5EFEF] text-[#000000] rounded-xl text-xs font-medium border border-[#E8E3E1] transition-all active:scale-95 shadow-sm cursor-pointer"
+              className="hidden md:flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-[#F5EFEF] text-[#000000] rounded-xl text-xs font-medium border border-[#E8E3E1] transition-all active:scale-95 shadow-sm cursor-pointer"
               title="Nuevo Artículo"
             >
-              <BookOpen className="w-3.5 h-3.5 text-[#a52f18] sm:hidden" />
-              <span className="hidden sm:inline">+ Artículo</span>
-              <span className="sm:hidden text-[10px] text-[#666]">+ Art</span>
+              <Plus className="w-3.5 h-3.5 text-[#a52f18]" />
+              <span>+ Artículo</span>
             </button>
             {onLogout && (
               <button

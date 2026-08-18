@@ -8,7 +8,7 @@ import {
   Save, 
   Eye, 
   Edit, 
-  Sparkles, 
+  FolderOpen, 
   Plus, 
   X, 
   CheckCircle, 
@@ -224,7 +224,7 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
           {/* Main Info Card */}
           <div className="bg-white border border-[#E8E3E1] rounded-2xl p-6 space-y-6 shadow-sm">
             <h3 className="text-sm font-semibold text-[#000000] border-b border-[#E8E3E1] pb-3 flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#a52f18]" />
+              <FolderOpen className="w-4 h-4 text-[#a52f18]" />
               Información Principal del Proyecto
             </h3>
 

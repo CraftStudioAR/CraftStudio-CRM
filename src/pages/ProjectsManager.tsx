@@ -7,7 +7,6 @@ import {
   Trash2, 
   Copy, 
   FolderKanban, 
-  Sparkles,
   Check
 } from 'lucide-react';
 import { getImageUrl } from '../lib/cloudinary';
@@ -105,7 +104,7 @@ export const ProjectsManager: React.FC<ProjectsManagerProps> = ({
       {/* Projects Grid */}
       {filteredProjects.length === 0 ? (
         <div className="border border-dashed border-[#E8E3E1] rounded-2xl p-12 text-center bg-white">
-          <Sparkles className="w-8 h-8 text-[#999999] mx-auto mb-3 opacity-60" />
+          <FolderKanban className="w-8 h-8 text-[#999999] mx-auto mb-3 opacity-60" />
           <h3 className="text-sm font-semibold text-[#000000]">No se encontraron proyectos</h3>
           <p className="text-xs text-[#666666] mt-1">Prueba cambiando el término de búsqueda.</p>
         </div>

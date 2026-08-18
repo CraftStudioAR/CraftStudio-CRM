@@ -3,7 +3,6 @@ import { WorkCase, CraftLabArticle } from '../types';
 import { 
   FolderKanban, 
   BookOpen, 
-  Sparkles, 
   ArrowUpRight, 
   Layers, 
   Plus, 
@@ -43,7 +42,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
         <div className="relative z-10 flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="space-y-2 max-w-2xl">
             <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FEFAF9] border border-[#E8E3E1] text-xs font-mono text-[#a52f18]">
-              <Sparkles className="w-3.5 h-3.5" />
+              <Layers className="w-3.5 h-3.5" />
               <span>Gestión de Marca & Portafolio</span>
             </div>
             <h1 className="text-3xl md:text-4xl font-serif text-[#000000] font-normal tracking-tight">
