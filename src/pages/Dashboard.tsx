@@ -125,7 +125,7 @@ export const Dashboard: React.FC<DashboardProps> = ({
               onClick={onGoToSettings}
               className="text-xs text-[#a52f18] hover:underline font-mono font-medium"
             >
-              Ver configuración SQL &gt;
+              Ver ajustes de almacenamiento &gt;
             </button>
           </div>
         </div>

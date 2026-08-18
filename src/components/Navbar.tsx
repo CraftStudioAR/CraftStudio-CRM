@@ -86,7 +86,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               }`}
             >
               <Settings className="w-3.5 h-3.5 text-[#a52f18]" />
-              Ajustes SQL
+              Ajustes
             </button>
           </nav>
         </div>
@@ -117,24 +117,29 @@ export const Navbar: React.FC<NavbarProps> = ({
           </button>
 
           {/* Quick Create & Logout Buttons */}
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1.5 sm:gap-2">
             <button
               onClick={onNewProject}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-[#a52f18] hover:bg-[#8b2612] text-[#FEFAF9] rounded-xl text-xs font-medium shadow-sm transition-all active:scale-95 cursor-pointer"
+              className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 bg-[#a52f18] hover:bg-[#8b2612] text-[#FEFAF9] rounded-xl text-xs font-semibold shadow-sm transition-all active:scale-95 cursor-pointer"
+              title="Nuevo Proyecto"
             >
               <Sparkles className="w-3.5 h-3.5" />
-              <span>+ Proyecto</span>
+              <span className="hidden sm:inline">+ Proyecto</span>
+              <span className="sm:hidden text-[10px]">+ Proy</span>
             </button>
             <button
               onClick={onNewArticle}
-              className="flex items-center gap-1.5 px-3.5 py-1.5 bg-white hover:bg-[#F5EFEF] text-[#000000] rounded-xl text-xs font-medium border border-[#E8E3E1] transition-all active:scale-95 shadow-sm cursor-pointer"
+              className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3.5 sm:py-2 bg-white hover:bg-[#F5EFEF] text-[#000000] rounded-xl text-xs font-medium border border-[#E8E3E1] transition-all active:scale-95 shadow-sm cursor-pointer"
+              title="Nuevo Artículo"
             >
-              <span>+ Artículo</span>
+              <BookOpen className="w-3.5 h-3.5 text-[#a52f18] sm:hidden" />
+              <span className="hidden sm:inline">+ Artículo</span>
+              <span className="sm:hidden text-[10px] text-[#666]">+ Art</span>
             </button>
             {onLogout && (
               <button
                 onClick={onLogout}
-                className="flex items-center gap-1.5 px-3 py-1.5 bg-black hover:bg-[#a52f18] text-white rounded-xl text-xs font-medium transition-all active:scale-95 shadow-sm cursor-pointer border border-transparent"
+                className="flex items-center gap-1 px-2.5 py-1.5 sm:px-3.5 bg-black hover:bg-[#a52f18] text-white rounded-xl text-xs font-semibold transition-all active:scale-95 shadow-sm cursor-pointer border border-transparent"
               >
                 Salir
               </button>

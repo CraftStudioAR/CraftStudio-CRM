@@ -42,6 +42,7 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
 
   const [newScopeTag, setNewScopeTag] = useState('');
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
+  const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
@@ -161,7 +162,62 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
 
       {/* Live Preview Pane */}
       {activeTab === 'preview' ? (
-        <ProjectPreview project={formData} />
+        <div className="space-y-6">
+          {/* Device Switcher */}
+          <div className="flex justify-center items-center gap-2 mb-2 bg-[#F5EFEF] p-1 rounded-xl border border-[#E8E3E1] max-w-xs mx-auto shadow-xs">
+            <button
+              type="button"
+              onClick={() => setPreviewDevice('desktop')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                previewDevice === 'desktop' ? 'bg-white text-[#a52f18] shadow-xs' : 'text-[#666666] hover:text-[#000000]'
+              }`}
+            >
+              💻 Escritorio
+            </button>
+            <button
+              type="button"
+              onClick={() => setPreviewDevice('tablet')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                previewDevice === 'tablet' ? 'bg-white text-[#a52f18] shadow-xs' : 'text-[#666666] hover:text-[#000000]'
+              }`}
+            >
+              📋 Tablet
+            </button>
+            <button
+              type="button"
+              onClick={() => setPreviewDevice('mobile')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                previewDevice === 'mobile' ? 'bg-white text-[#a52f18] shadow-xs' : 'text-[#666666] hover:text-[#000000]'
+              }`}
+            >
+              📱 Móvil
+            </button>
+          </div>
+
+          <div className="w-full overflow-x-auto py-6 flex justify-center bg-[#F5EFEF] rounded-2xl border border-[#E8E3E1]">
+            <div
+              className={`transition-all duration-300 bg-[#FEFAF9] text-[#000000] border border-[#E8E3E1] shadow-2xl relative ${
+                previewDevice === 'mobile'
+                  ? 'w-[375px] h-[667px] rounded-3xl overflow-y-auto outline-[12px] outline-solid outline-black/90 outline-offset-0 ring-1 ring-black/10'
+                  : previewDevice === 'tablet'
+                  ? 'w-[768px] h-[1024px] rounded-2xl overflow-y-auto outline-[8px] outline-solid outline-black/85 outline-offset-0 ring-1 ring-black/10'
+                  : 'w-full max-w-5xl rounded-2xl p-6 md:p-12'
+              }`}
+            >
+              {/* Device Screen Frame Simulators */}
+              {previewDevice !== 'desktop' && (
+                <div className="sticky top-0 z-30 w-full py-1 text-center bg-black/90 text-white font-mono text-[9px] uppercase tracking-widest flex items-center justify-center gap-2 select-none mb-4">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red animate-pulse" />
+                  Vista previa {previewDevice === 'mobile' ? 'móvil' : 'tablet'} activa
+                </div>
+              )}
+              
+              <div className={`${previewDevice !== 'desktop' ? 'p-4' : ''}`}>
+                <ProjectPreview project={formData} />
+              </div>
+            </div>
+          </div>
+        </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-8">
           

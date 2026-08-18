@@ -39,6 +39,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   });
 
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
+  const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
 
@@ -146,44 +147,97 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
       {/* Live Article Preview */}
       {activeTab === 'preview' ? (
-        <div className="bg-[#FEFAF9] text-[#000000] rounded-2xl border border-[#E8E3E1] p-6 md:p-12 max-w-4xl mx-auto shadow-md space-y-8 font-sans">
-          <div className="space-y-3 border-b border-[#E8E3E1] pb-6">
-            <div className="flex items-center gap-3 text-xs font-mono">
-              <span className="px-2.5 py-0.5 rounded bg-white text-[#a52f18] border border-[#a52f18]/20 font-bold uppercase">
-                {formData.category}
-              </span>
-              <span className="text-[#666666]">•</span>
-              <span className="text-[#666666]">{formData.date}</span>
-            </div>
-            <h1 className="text-4xl md:text-5xl font-serif font-normal text-[#000000] tracking-tight">
-              {formData.title || 'Título del Artículo'}
-            </h1>
-            <p className="text-base text-[#666666] italic font-serif">
-              {formData.desc}
-            </p>
+        <div className="space-y-6">
+          {/* Device Switcher */}
+          <div className="flex justify-center items-center gap-2 mb-2 bg-[#F5EFEF] p-1 rounded-xl border border-[#E8E3E1] max-w-xs mx-auto shadow-xs">
+            <button
+              type="button"
+              onClick={() => setPreviewDevice('desktop')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                previewDevice === 'desktop' ? 'bg-white text-[#a52f18] shadow-xs' : 'text-[#666666] hover:text-[#000000]'
+              }`}
+            >
+              💻 Escritorio
+            </button>
+            <button
+              type="button"
+              onClick={() => setPreviewDevice('tablet')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                previewDevice === 'tablet' ? 'bg-white text-[#a52f18] shadow-xs' : 'text-[#666666] hover:text-[#000000]'
+              }`}
+            >
+              📋 Tablet
+            </button>
+            <button
+              type="button"
+              onClick={() => setPreviewDevice('mobile')}
+              className={`flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+                previewDevice === 'mobile' ? 'bg-white text-[#a52f18] shadow-xs' : 'text-[#666666] hover:text-[#000000]'
+              }`}
+            >
+              📱 Móvil
+            </button>
           </div>
 
-          {formData.image && (
-            <div className="rounded-2xl overflow-hidden border border-[#E8E3E1]">
-              <img
-                src={getImageUrl(formData.image)}
-                alt={formData.title}
-                className="w-full max-h-[480px] object-cover"
-              />
-            </div>
-          )}
+          <div className="w-full overflow-x-auto py-6 flex justify-center bg-[#F5EFEF] rounded-2xl border border-[#E8E3E1]">
+            <div
+              className={`transition-all duration-300 bg-[#FEFAF9] text-[#000000] border border-[#E8E3E1] shadow-2xl relative ${
+                previewDevice === 'mobile'
+                  ? 'w-[375px] h-[667px] rounded-3xl overflow-y-auto outline-[12px] outline-solid outline-black/90 outline-offset-0 ring-1 ring-black/10'
+                  : previewDevice === 'tablet'
+                  ? 'w-[768px] h-[1024px] rounded-2xl overflow-y-auto outline-[8px] outline-solid outline-black/85 outline-offset-0 ring-1 ring-black/10'
+                  : 'w-full max-w-4xl rounded-2xl p-6 md:p-12 space-y-8 font-sans shadow-md'
+              }`}
+            >
+              {/* Device Screen Frame Simulators */}
+              {previewDevice !== 'desktop' && (
+                <div className="sticky top-0 z-30 w-full py-1 text-center bg-black/90 text-white font-mono text-[9px] uppercase tracking-widest flex items-center justify-center gap-2 select-none mb-6">
+                  <span className="w-1.5 h-1.5 rounded-full bg-red animate-pulse" />
+                  Vista previa {previewDevice === 'mobile' ? 'móvil' : 'tablet'} activa
+                </div>
+              )}
 
-          {formData.blocks && formData.blocks.length > 0 ? (
-            <div className="flex flex-col gap-6 md:gap-10 mt-8">
-              {formData.blocks.map((block, index) => (
-                <Block key={index} block={block} />
-              ))}
+              <div className={`${previewDevice !== 'desktop' ? 'p-4 space-y-6 font-sans' : 'space-y-8'}`}>
+                <div className="space-y-3 border-b border-[#E8E3E1] pb-6">
+                  <div className="flex items-center gap-3 text-xs font-mono">
+                    <span className="px-2.5 py-0.5 rounded bg-white text-[#a52f18] border border-[#a52f18]/20 font-bold uppercase">
+                      {formData.category}
+                    </span>
+                    <span className="text-[#666666]">•</span>
+                    <span className="text-[#666666]">{formData.date}</span>
+                  </div>
+                  <h1 className="text-3xl md:text-5xl font-serif font-normal text-[#000000] tracking-tight leading-tight">
+                    {formData.title || 'Título del Artículo'}
+                  </h1>
+                  <p className="text-base text-[#666666] italic font-serif">
+                    {formData.desc}
+                  </p>
+                </div>
+
+                {formData.image && (
+                  <div className="rounded-2xl overflow-hidden border border-[#E8E3E1]">
+                    <img
+                      src={getImageUrl(formData.image)}
+                      alt={formData.title}
+                      className="w-full max-h-[480px] object-cover"
+                    />
+                  </div>
+                )}
+
+                {formData.blocks && formData.blocks.length > 0 ? (
+                  <div className="flex flex-col gap-6 md:gap-10 mt-8">
+                    {formData.blocks.map((block, index) => (
+                      <Block key={index} block={block} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="prose max-w-none text-[#000000] text-base md:text-lg leading-relaxed space-y-4 whitespace-pre-line font-serif">
+                    {formData.content || 'El contenido del artículo aparecerá aquí...'}
+                  </div>
+                )}
+              </div>
             </div>
-          ) : (
-            <div className="prose max-w-none text-[#000000] text-base md:text-lg leading-relaxed space-y-4 whitespace-pre-line font-serif">
-              {formData.content || 'El contenido del artículo aparecerá aquí...'}
-            </div>
-          )}
+          </div>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-6">
