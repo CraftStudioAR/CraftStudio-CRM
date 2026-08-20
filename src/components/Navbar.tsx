@@ -30,12 +30,9 @@ export const Navbar: React.FC<NavbarProps> = ({
             <div className="w-9 h-9 rounded-lg bg-[#000000] text-[#FEFAF9] flex items-center justify-center font-serif font-bold text-xl tracking-tighter group-hover:bg-[#a52f18] transition-colors">
               C
             </div>
-            <div>
-              <div className="flex items-center gap-2">
-                <span className="font-semibold text-[#000000] tracking-wider text-xs uppercase font-sans">Craft Studio</span>
-                <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-[#a52f18]/10 text-[#a52f18] border border-[#a52f18]/20 font-bold">CRM</span>
-              </div>
-              <p className="text-[11px] text-[#666666] font-serif italic">Panel de Control & Editorial</p>
+            <div className="flex items-center gap-2">
+              <span className="font-semibold text-[#000000] tracking-wider text-xs uppercase font-sans">Craft Studio</span>
+              <span className="text-[10px] uppercase font-mono px-1.5 py-0.5 rounded bg-[#a52f18]/10 text-[#a52f18] border border-[#a52f18]/20 font-bold">CRM</span>
             </div>
           </div>
 
