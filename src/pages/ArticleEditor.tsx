@@ -81,8 +81,8 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   return (
     <div className="space-y-6 animate-fadeIn pb-16">
       
-      {/* Header Bar */}
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#E8E3E1] pb-5">
+      {/* Editor Header Bar */}
+      <div className="sticky top-[106px] md:top-[65px] z-40 bg-[#FEFAF9]/95 backdrop-blur-md py-4 border-b border-[#E8E3E1] flex flex-col sm:flex-row sm:items-center justify-between gap-4 -mx-4 px-4 md:-mx-8 md:px-8">
         <div className="flex items-center gap-3">
           <button
             onClick={onBack}
