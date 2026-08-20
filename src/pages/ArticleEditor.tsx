@@ -72,7 +72,10 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
     if (res.success) {
       setFeedback({ type: 'success', message: '¡Artículo de Craft Lab guardado con éxito!' });
-      setTimeout(() => setFeedback(null), 3000);
+      setTimeout(() => {
+        setFeedback(null);
+        onBack();
+      }, 1000);
     } else {
       setFeedback({ type: 'error', message: res.error || 'Error al guardar el artículo' });
     }

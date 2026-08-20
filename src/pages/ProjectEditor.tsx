@@ -86,7 +86,10 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
 
     if (res.success) {
       setFeedback({ type: 'success', message: '¡Proyecto guardado exitosamente!' });
-      setTimeout(() => setFeedback(null), 3000);
+      setTimeout(() => {
+        setFeedback(null);
+        onBack();
+      }, 1000);
     } else {
       setFeedback({ type: 'error', message: res.error || 'Error al guardar el proyecto' });
     }
