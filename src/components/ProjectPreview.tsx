@@ -270,6 +270,15 @@ export function Block({ block }: { block: ProjectBlock }) {
     case 'testimonial':
       return <Testimonial quote={block.quote} author={block.author} role={block.role} />;
 
+    case 'text':
+      return (
+        <div className="max-w-3xl mx-auto w-full px-6 md:px-0 my-4">
+          <p className={`text-sm md:text-base text-ink leading-relaxed font-serif text-${block.align || 'left'} whitespace-pre-line`}>
+            {block.text}
+          </p>
+        </div>
+      );
+
     default:
       return null;
   }

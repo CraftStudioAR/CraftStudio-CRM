@@ -27,7 +27,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   onBack,
 }) => {
   const [formData, setFormData] = useState<CraftLabArticle>({
-    id: Date.now().toString(),
+    id: crypto.randomUUID(),
     slug: '',
     title: '',
     date: new Date().toLocaleDateString('es-ES', { day: '2-digit', month: 'short' }).toUpperCase(),

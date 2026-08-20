@@ -152,8 +152,14 @@ export async function fetchArticles(): Promise<CraftLabArticle[]> {
 export async function saveArticle(article: CraftLabArticle): Promise<{ success: boolean; error?: string }> {
   if (isSupabaseConfigured && supabase) {
     try {
+      let articleId = article.id;
+      // Validar si es un UUID válido. Si no lo es (ej: un timestamp local), generamos un nuevo UUID
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(articleId)) {
+        articleId = crypto.randomUUID();
+      }
+
       const payload = {
-        id: article.id || crypto.randomUUID(),
+        id: articleId,
         slug: article.slug,
         title: article.title,
         date: article.date,

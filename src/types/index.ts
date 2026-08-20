@@ -65,7 +65,12 @@ export type ProjectBlock =
       items: Stat[];
       highlight?: Stat;
     }
-  | { type: "testimonial"; quote: string; author: string; role: string };
+  | { type: "testimonial"; quote: string; author: string; role: string }
+  | {
+      type: "text";
+      text: string;
+      align?: 'left' | 'center' | 'right';
+    };
 
 export type WorkCase = {
   id?: string;

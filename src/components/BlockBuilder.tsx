@@ -203,6 +203,13 @@ export const BlockBuilder: React.FC<BlockBuilderProps> = ({ blocks, onChange }) 
   const handleAddBlock = (type: ProjectBlock['type']) => {
     let newBlock: ProjectBlock;
     switch (type) {
+      case 'text':
+        newBlock = {
+          type: 'text',
+          text: '',
+          align: 'left',
+        };
+        break;
       case 'image':
         newBlock = { type: 'image', image: { publicId: '', alt: '' }, aspect: 'auto', size: 'full' };
         break;
@@ -392,6 +399,7 @@ export const BlockBuilder: React.FC<BlockBuilderProps> = ({ blocks, onChange }) 
       <div className="pt-2">
         <p className="text-xs text-[#666666] mb-2.5 font-medium">Añadir bloque:</p>
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
+          <AddBlockButton icon={AlignLeft} label="Texto Solo" sub="Párrafo normal" onClick={() => handleAddBlock('text')} />
           <AddBlockButton icon={ImageIcon} label="Imagen Única" sub="Full width" onClick={() => handleAddBlock('image')} />
           <AddBlockButton icon={Grid} label="Par de Imágenes" sub="Díptico" onClick={() => handleAddBlock('imagePair')} />
           <AddBlockButton icon={LayoutList} label="Feature (1+2)" sub="Grande + apiladas" onClick={() => handleAddBlock('imageFeature')} />
@@ -438,6 +446,7 @@ const BlockLayoutSummary: React.FC<{ block: ProjectBlock }> = ({ block }) => {
 // =========================================================
 const BlockTypeBadge: React.FC<{ type: ProjectBlock['type'] }> = ({ type }) => {
   const configs: Record<ProjectBlock['type'], { label: string; color: string; icon: any }> = {
+    text: { label: 'Texto Solo', color: 'bg-slate-50 text-slate-700 border-slate-200', icon: AlignLeft },
     image: { label: 'Imagen', color: 'bg-blue-50 text-blue-700 border-blue-200', icon: ImageIcon },
     imagePair: { label: 'Díptico', color: 'bg-purple-50 text-purple-700 border-purple-200', icon: Grid },
     imageFeature: { label: 'Feature (1+2)', color: 'bg-indigo-50 text-indigo-700 border-indigo-200', icon: LayoutList },
@@ -493,6 +502,13 @@ const BlockSummaryPreview: React.FC<{ block: ProjectBlock }> = ({ block }) => {
   );
 
   switch (block.type) {
+    case 'text':
+      return (
+        <div className="flex items-center gap-2 text-[#666666] truncate max-w-lg">
+          <AlignLeft className="w-4 h-4 text-[#a52f18] shrink-0" />
+          <span className="truncate italic">"{block.text || '(Sin texto)'}"</span>
+        </div>
+      );
     case 'image':
       return (
         <div className="flex items-center gap-3">
@@ -577,6 +593,36 @@ const BlockEditorForm: React.FC<{
   onChange: (block: ProjectBlock) => void;
 }> = ({ block, onChange }) => {
   switch (block.type) {
+    case 'text':
+      return (
+        <div className="space-y-4">
+          <div>
+            <label className="block text-[11px] font-medium text-[#888] mb-1.5 uppercase tracking-wide">
+              Contenido del Párrafo (Soporta saltos de línea)
+            </label>
+            <textarea
+              rows={6}
+              value={block.text}
+              onChange={(e) => onChange({ ...block, text: e.target.value })}
+              placeholder="Escribí el cuerpo del texto aquí..."
+              className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3.5 py-2.5 text-xs text-[#000000] outline-none font-serif text-sm leading-relaxed resize-y"
+            />
+          </div>
+          <SectionDivider label="Diseño" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <ToggleGroup
+              label="Alineación de Texto"
+              value={block.align || 'left'}
+              options={[
+                { value: 'left', label: 'Izquierda', icon: <AlignLeft className="w-3 h-3" /> },
+                { value: 'center', label: 'Centro', icon: <AlignCenter className="w-3 h-3" /> },
+                { value: 'right', label: 'Derecha', icon: <AlignRight className="w-3 h-3" /> },
+              ]}
+              onChange={(v) => onChange({ ...block, align: v })}
+            />
+          </div>
+        </div>
+      );
     case 'image':
       return (
         <div className="space-y-4">
