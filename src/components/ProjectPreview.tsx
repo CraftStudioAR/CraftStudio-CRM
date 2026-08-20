@@ -200,7 +200,7 @@ export function Block({ block }: { block: ProjectBlock }) {
       const stackOnMobile = block.mobileLayout === 'stack';
       return (
         <div
-          className={`grid items-start gap-3 md:grid-cols-2 md:gap-6 ${
+          className={`grid items-stretch gap-3 md:grid-cols-2 md:gap-6 ${
             stackOnMobile ? 'grid-cols-1' : 'grid-cols-2'
           }`}
         >
@@ -210,6 +210,8 @@ export function Block({ block }: { block: ProjectBlock }) {
               publicId={img.publicId}
               alt={img.alt}
               aspect={block.aspect && block.aspect !== 'auto' ? block.aspect.replace(':', ' / ') : undefined}
+              className="h-full w-full"
+              imgClassName="h-full object-cover"
             />
           ))}
         </div>
