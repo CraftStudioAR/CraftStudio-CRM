@@ -124,7 +124,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               title="Nuevo Proyecto"
             >
               <Plus className="w-3.5 h-3.5" />
-              <span>+ Proyecto</span>
+              <span>Proyecto</span>
             </button>
             <button
               onClick={onNewArticle}
@@ -132,7 +132,7 @@ export const Navbar: React.FC<NavbarProps> = ({
               title="Nuevo Artículo"
             >
               <Plus className="w-3.5 h-3.5 text-[#a52f18]" />
-              <span>+ Artículo</span>
+              <span>Artículo</span>
             </button>
             {onLogout && (
               <button
