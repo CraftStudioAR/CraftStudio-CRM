@@ -11,7 +11,8 @@ import {
   ArrowUpDown,
   GripVertical,
   Save,
-  X
+  X,
+  Star
 } from 'lucide-react';
 import { getImageUrl } from '../lib/cloudinary';
 
@@ -22,6 +23,7 @@ interface ProjectsManagerProps {
   onDeleteProject: (slug: string) => void;
   onDuplicateProject: (project: WorkCase) => void;
   onSaveOrder: (slugs: string[]) => Promise<{ success: boolean; error?: string }>;
+  onToggleFeatured: (slug: string, featured: boolean) => void;
 }
 
 export const ProjectsManager: React.FC<ProjectsManagerProps> = ({
@@ -31,6 +33,7 @@ export const ProjectsManager: React.FC<ProjectsManagerProps> = ({
   onDeleteProject,
   onDuplicateProject,
   onSaveOrder,
+  onToggleFeatured,
 }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('Todos');
@@ -286,16 +289,31 @@ export const ProjectsManager: React.FC<ProjectsManagerProps> = ({
                       alt={project.client}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
-                    <div className="absolute top-3 left-3 flex items-center gap-2">
+                    <div className="absolute top-3 left-3 flex items-center gap-1.5">
                       <span className="px-2.5 py-1 rounded-md bg-[#FEFAF9]/90 backdrop-blur-md text-[11px] font-mono text-[#000000] border border-[#E8E3E1]">
                         {project.category}
                       </span>
-                    </div>
-                    <div className="absolute top-3 right-3">
-                      <span className="px-2 py-0.5 rounded bg-white/80 backdrop-blur-md text-[10px] font-mono text-[#666666] border border-[#E8E3E1]">
+                      <span className="px-2 py-1 rounded-md bg-[#FEFAF9]/90 backdrop-blur-md text-[11px] font-mono text-[#666666] border border-[#E8E3E1]">
                         {project.year}
                       </span>
                     </div>
+
+                    {/* Star Highlight Toggle */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onToggleFeatured(project.slug, !project.featured);
+                      }}
+                      className={`absolute top-3 right-3 p-1.5 rounded-lg border backdrop-blur-md transition-all active:scale-95 z-10 ${
+                        project.featured
+                          ? 'bg-[#a52f18] text-[#FEFAF9] border-[#a52f18] shadow-sm'
+                          : 'bg-white/80 text-[#666666] border-[#E8E3E1] hover:text-[#a52f18] hover:bg-white'
+                      }`}
+                      title={project.featured ? "Quitar de destacados" : "Destacar en el Home"}
+                    >
+                      <Star className={`w-3.5 h-3.5 ${project.featured ? 'fill-[#FEFAF9]' : ''}`} />
+                    </button>
                   </div>
 
                   {/* Body Info */}

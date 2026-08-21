@@ -105,6 +105,7 @@ export type WorkCase = {
   blocks?: ProjectBlock[];
   created_at?: string;
   updated_at?: string;
+  featured?: boolean;
   titleStyle?: {
     bold?: boolean;
     italic?: boolean;

@@ -62,10 +62,12 @@ export async function fetchProjects(): Promise<WorkCase[]> {
 
         const mappedProjects = projectsOnly.map((item) => {
           let titleStyle = undefined;
+          let featured = false;
           try {
             if (item.description && item.description.trim().startsWith('{')) {
               const parsed = JSON.parse(item.description);
               titleStyle = parsed.titleStyle;
+              featured = parsed.featured || false;
             }
           } catch (e) {
             // Ignore
@@ -76,6 +78,7 @@ export async function fetchProjects(): Promise<WorkCase[]> {
             cover: typeof item.cover === 'string' ? JSON.parse(item.cover) : item.cover,
             blocks: typeof item.blocks === 'string' ? JSON.parse(item.blocks) : item.blocks,
             titleStyle,
+            featured,
           };
         });
 
@@ -128,7 +131,10 @@ export async function saveProject(project: WorkCase): Promise<{ success: boolean
         category: project.category,
         year: project.year,
         summary: project.summary,
-        description: project.titleStyle ? JSON.stringify({ titleStyle: project.titleStyle }) : '',
+        description: JSON.stringify({
+          titleStyle: project.titleStyle,
+          featured: project.featured || false,
+        }),
         scope: project.scope || [],
         cover: project.cover || null,
         blocks: project.blocks || [],

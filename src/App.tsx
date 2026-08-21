@@ -108,6 +108,15 @@ export function App() {
     await loadData();
   };
 
+  const handleToggleFeatured = async (slug: string, featured: boolean) => {
+    const project = projects.find((p) => p.slug === slug);
+    if (project) {
+      const updated = { ...project, featured };
+      await saveProject(updated);
+      await loadData();
+    }
+  };
+
   // Handlers for Articles
   const handleOpenNewArticle = () => {
     setEditingArticle(null);
@@ -205,6 +214,7 @@ export function App() {
                 onDeleteProject={handleDeleteProject}
                 onDuplicateProject={handleDuplicateProject}
                 onSaveOrder={handleSaveProjectsOrder}
+                onToggleFeatured={handleToggleFeatured}
               />
             )}
 
