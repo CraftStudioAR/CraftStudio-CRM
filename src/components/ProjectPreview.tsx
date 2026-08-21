@@ -326,12 +326,12 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
       return <Testimonial quote={block.quote} author={block.author} role={block.role} />;
 
     case 'text': {
-      const containerWidth = 
-        block.widthMode === 'full' 
-          ? 'w-full' 
-          : block.widthMode === 'auto' 
-            ? 'w-fit max-w-full' 
-            : 'max-w-3xl';
+      const isFullWidth = block.hasContainer || block.widthMode === 'full';
+      const containerWidth = isFullWidth 
+        ? 'w-full' 
+        : block.widthMode === 'auto' 
+          ? 'w-fit max-w-full' 
+          : 'max-w-3xl';
 
       const containerClass = `mx-auto w-full my-4 ${containerWidth} ${
         block.hasContainer 
@@ -343,7 +343,7 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
         ? { border: '1px solid rgba(0,0,0,0.10)', background: 'rgba(0,0,0,0.02)' }
         : undefined;
 
-      const innerClass = (block.hasContainer && block.widthMode === 'full')
+      const innerClass = isFullWidth
         ? 'max-w-3xl mx-auto w-full flex flex-col gap-4'
         : 'w-full flex flex-col gap-4';
 
