@@ -3,6 +3,57 @@ import { WorkCase, ProjectBlock, ColumnSplit } from '../types';
 import { getImageUrl } from '../lib/cloudinary';
 import { Maximize2, X } from 'lucide-react';
 
+function getResponsiveTextStyle(
+  elementId: string,
+  sizeMobile: string,
+  sizeTablet: string,
+  sizeDesktop: string,
+  device: 'desktop' | 'tablet' | 'mobile' = 'desktop'
+) {
+  let className = '';
+  let style: React.CSSProperties = {};
+  let styleElement: React.ReactNode = null;
+
+  if (device === 'mobile') {
+    if (sizeMobile.startsWith('text-')) {
+      className = sizeMobile;
+    } else {
+      style.fontSize = sizeMobile;
+    }
+  } else if (device === 'tablet') {
+    if (sizeTablet.startsWith('text-')) {
+      className = sizeTablet;
+    } else {
+      style.fontSize = sizeTablet;
+    }
+  } else {
+    const classes = [];
+    if (sizeMobile.startsWith('text-')) classes.push(sizeMobile);
+    if (sizeTablet.startsWith('text-')) classes.push(`md:${sizeTablet}`);
+    if (sizeDesktop.startsWith('text-')) classes.push(`lg:${sizeDesktop}`);
+    className = classes.join(' ');
+
+    const hasCustom = !sizeMobile.startsWith('text-') || !sizeTablet.startsWith('text-') || !sizeDesktop.startsWith('text-');
+    if (hasCustom) {
+      const cssRules = [];
+      if (!sizeMobile.startsWith('text-')) {
+        cssRules.push(`#${elementId} { font-size: ${sizeMobile}; }`);
+      }
+      if (!sizeTablet.startsWith('text-')) {
+        cssRules.push(`@media (min-width: 768px) { #${elementId} { font-size: ${sizeTablet}; } }`);
+      }
+      if (!sizeDesktop.startsWith('text-')) {
+        cssRules.push(`@media (min-width: 1024px) { #${elementId} { font-size: ${sizeDesktop}; } }`);
+      }
+      styleElement = (
+        <style dangerouslySetInnerHTML={{ __html: cssRules.join('\n') }} />
+      );
+    }
+  }
+
+  return { className, style, styleElement };
+}
+
 // ─────────────────────────────────────────────
 // Color tokens (exactos del frontend)
 // ─────────────────────────────────────────────
@@ -300,22 +351,29 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
       const sizeTablet = block.sizeTablet || 'text-base';
       const sizeDesktop = block.sizeDesktop || 'text-base';
 
-      const resolvedSizeClass = 
-        device === 'mobile'
-          ? sizeMobile
-          : device === 'tablet'
-          ? sizeTablet
-          : `${sizeMobile} md:${sizeTablet} lg:${sizeDesktop}`;
-
-      const textClass = `text-ink/80 text-${block.align || 'left'} ${fontFamily} ${boldClass} ${italicClass} ${trackingClass} ${leadingClass} ${resolvedSizeClass}`;
+      const elementId = `text-preview-${Math.random().toString(36).substr(2, 9)}`;
 
       return (
         <div className={containerClass} style={containerStyle}>
-          {block.text.split('\n\n').map((paragraph, idx) => (
-            <p key={idx} className={textClass}>
-              {paragraph}
-            </p>
-          ))}
+          {block.text.split('\n\n').map((paragraph, idx) => {
+            const pId = `${elementId}-${idx}`;
+            const { className: resolvedSizeClass, style: sizeStyle, styleElement } = getResponsiveTextStyle(
+              pId,
+              sizeMobile,
+              sizeTablet,
+              sizeDesktop,
+              device
+            );
+            const textClass = `text-ink/80 text-${block.align || 'left'} ${fontFamily} ${boldClass} ${italicClass} ${trackingClass} ${leadingClass} ${resolvedSizeClass}`;
+            return (
+              <React.Fragment key={idx}>
+                {styleElement}
+                <p id={pId} className={textClass} style={sizeStyle}>
+                  {paragraph}
+                </p>
+              </React.Fragment>
+            );
+          })}
         </div>
       );
     }
@@ -412,25 +470,36 @@ export const ProjectPreview: React.FC<ProjectPreviewProps & { device?: 'desktop'
 
             {/* LEFT — título + summary */}
             <div className="lg:col-span-7 flex flex-col gap-4 md:gap-5">
-              <h1
-                className={`font-serif text-[#0a0424] text-balance ${
-                  project.titleStyle?.bold ? 'font-bold' : 'font-normal'
-                } ${
-                  project.titleStyle?.italic !== false ? 'italic' : 'not-italic'
-                } ${
-                  project.titleStyle?.tracking || 'tracking-tight'
-                } ${
-                  project.titleStyle?.leading || 'leading-[0.95]'
-                } ${
-                  device === 'mobile'
-                    ? (project.titleStyle?.sizeMobile || 'text-4xl')
-                    : device === 'tablet'
-                    ? (project.titleStyle?.sizeTablet || 'text-6xl')
-                    : `${project.titleStyle?.sizeMobile || 'text-4xl'} md:${project.titleStyle?.sizeTablet || 'text-6xl'} lg:${project.titleStyle?.sizeDesktop || 'text-[9rem]'}`
-                }`}
-              >
-                {mainTitle}
-              </h1>
+              {(() => {
+                const titleId = `title-preview-${Math.random().toString(36).substr(2, 9)}`;
+                const { className: titleSizeClass, style: titleSizeStyle, styleElement: titleStyleElement } = getResponsiveTextStyle(
+                  titleId,
+                  project.titleStyle?.sizeMobile || 'text-4xl',
+                  project.titleStyle?.sizeTablet || 'text-6xl',
+                  project.titleStyle?.sizeDesktop || 'text-[9rem]',
+                  device
+                );
+                return (
+                  <>
+                    {titleStyleElement}
+                    <h1
+                      id={titleId}
+                      className={`font-serif text-[#0a0424] text-balance ${
+                        project.titleStyle?.bold ? 'font-bold' : 'font-normal'
+                      } ${
+                        project.titleStyle?.italic !== false ? 'italic' : 'not-italic'
+                      } ${
+                        project.titleStyle?.tracking || 'tracking-tight'
+                      } ${
+                        project.titleStyle?.leading || 'leading-[0.95]'
+                      } ${titleSizeClass}`}
+                      style={titleSizeStyle}
+                    >
+                      {mainTitle}
+                    </h1>
+                  </>
+                );
+              })()}
 
               {project.title && (
                 <p

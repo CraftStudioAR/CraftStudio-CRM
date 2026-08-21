@@ -585,6 +585,57 @@ const BlockSummaryPreview: React.FC<{ block: ProjectBlock }> = ({ block }) => {
       return <span className="text-xs text-[#666]">Bloque de contenido</span>;
   }
 };
+const SIZE_PRESETS = [
+  { value: 'text-xs', label: 'XS' },
+  { value: 'text-sm', label: 'SM' },
+  { value: 'text-base', label: 'Base' },
+  { value: 'text-lg', label: 'LG' },
+  { value: 'text-xl', label: 'XL' },
+  { value: 'text-2xl', label: '2XL' },
+  { value: 'text-3xl', label: '3XL' },
+  { value: 'text-4xl', label: '4XL' },
+  { value: 'text-5xl', label: '5XL' },
+  { value: 'text-6xl', label: '6XL' },
+  { value: 'text-7xl', label: '7XL' },
+  { value: 'text-8xl', label: '8XL' },
+  { value: 'text-9xl', label: '9XL' },
+  { value: '10rem', label: '10rem' },
+];
+
+const SizeInputWithPresets: React.FC<{
+  label: string;
+  value: string;
+  onChange: (val: string) => void;
+}> = ({ label, value, onChange }) => {
+  return (
+    <div className="flex flex-col gap-1.5 w-full">
+      <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">
+        {label}
+      </label>
+      <div className="flex gap-2">
+        <input
+          type="text"
+          value={value}
+          onChange={(e) => onChange(e.target.value)}
+          placeholder="ej: text-2xl o 8.5rem"
+          className="flex-1 h-[34px] bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3.5 text-xs text-[#000000] font-sans font-medium outline-none focus:border-[#a52f18]/30 transition-all"
+        />
+        <div className="w-[110px]">
+          <CustomSelect
+            value={SIZE_PRESETS.some(p => p.value === value) ? value : ''}
+            onChange={(val) => {
+              if (val) onChange(val);
+            }}
+            options={[
+              { value: '', label: 'Presets...' },
+              ...SIZE_PRESETS
+            ]}
+          />
+        </div>
+      </div>
+    </div>
+  );
+};
 
 // =========================================================
 // BLOCK EDITOR FORM
@@ -716,53 +767,21 @@ const BlockEditorForm: React.FC<{
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-[#E8E3E1] pt-4">
-            <CustomSelect
+            <SizeInputWithPresets
               label="Tamaño Mobile"
               value={block.sizeMobile || 'text-lg'}
-              options={[
-                { value: 'text-xs', label: 'XS' },
-                { value: 'text-sm', label: 'SM' },
-                { value: 'text-base', label: 'Base' },
-                { value: 'text-lg', label: 'LG' },
-                { value: 'text-xl', label: 'XL' },
-                { value: 'text-2xl', label: '2XL' },
-                { value: 'text-3xl', label: '3XL' },
-                { value: 'text-4xl', label: '4XL' },
-              ]}
               onChange={(v) => onChange({ ...block, sizeMobile: v })}
             />
 
-            <CustomSelect
+            <SizeInputWithPresets
               label="Tamaño Tablet"
               value={block.sizeTablet || 'text-xl'}
-              options={[
-                { value: 'text-sm', label: 'SM' },
-                { value: 'text-base', label: 'Base' },
-                { value: 'text-lg', label: 'LG' },
-                { value: 'text-xl', label: 'XL' },
-                { value: 'text-2xl', label: '2XL' },
-                { value: 'text-3xl', label: '3XL' },
-                { value: 'text-4xl', label: '4XL' },
-                { value: 'text-5xl', label: '5XL' },
-              ]}
               onChange={(v) => onChange({ ...block, sizeTablet: v })}
             />
 
-            <CustomSelect
+            <SizeInputWithPresets
               label="Tamaño Desktop"
               value={block.sizeDesktop || 'text-2xl'}
-              options={[
-                { value: 'text-base', label: 'Base' },
-                { value: 'text-lg', label: 'LG' },
-                { value: 'text-xl', label: 'XL' },
-                { value: 'text-2xl', label: '2XL' },
-                { value: 'text-3xl', label: '3XL' },
-                { value: 'text-4xl', label: '4XL' },
-                { value: 'text-5xl', label: '5XL' },
-                { value: 'text-6xl', label: '6XL' },
-                { value: 'text-7xl', label: '7XL' },
-                { value: 'text-8xl', label: '8XL' },
-              ]}
               onChange={(v) => onChange({ ...block, sizeDesktop: v })}
             />
           </div>
