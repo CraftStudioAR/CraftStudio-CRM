@@ -441,7 +441,7 @@ export async function saveProjectsOrder(slugs: string[]): Promise<{ success: boo
     year: '2026',
     summary: 'System metadata row',
     scope: [],
-    cover: null,
+    cover: { publicId: '', alt: '' },
     blocks: [],
     updated_at: new Date().toISOString(),
   };
@@ -554,7 +554,7 @@ export async function saveBrandLogos(logos: Array<{ publicId: string; alt: strin
         year: '2026',
         summary: 'System metadata row',
         scope: [],
-        cover: null,
+        cover: { publicId: '', alt: '' },
         blocks: [],
         updated_at: new Date().toISOString(),
       };
