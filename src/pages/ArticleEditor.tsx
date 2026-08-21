@@ -14,6 +14,7 @@ import { getImageUrl } from '../lib/cloudinary';
 import { ImageUploader } from '../components/ImageUploader';
 import { BlockBuilder } from '../components/BlockBuilder';
 import { Block } from '../components/ProjectPreview';
+import { CustomSelect } from '../components/CustomSelect';
 
 interface ArticleEditorProps {
   initialArticle?: CraftLabArticle | null;
@@ -280,16 +281,16 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
               <div>
                 <label className="block text-xs font-medium text-[#666666] mb-1.5">Categoría *</label>
-                <select
+                <CustomSelect
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] outline-none"
-                >
-                  <option value="Estrategia">Estrategia</option>
-                  <option value="Diseño">Diseño</option>
-                  <option value="Cultura">Cultura</option>
-                  <option value="Arte">Arte</option>
-                </select>
+                  onChange={(v) => setFormData({ ...formData, category: v })}
+                  options={[
+                    { value: 'Estrategia', label: 'Estrategia' },
+                    { value: 'Diseño', label: 'Diseño' },
+                    { value: 'Cultura', label: 'Cultura' },
+                    { value: 'Arte', label: 'Arte' },
+                  ]}
+                />
               </div>
 
               <div>
@@ -313,16 +314,16 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
               <div>
                 <label className="block text-xs font-medium text-[#666666] mb-1.5">Proporción de Tarjeta (Aspect Ratio)</label>
-                <select
+                <CustomSelect
                   value={formData.aspect || 'aspect-[4/5]'}
-                  onChange={(e) => setFormData({ ...formData, aspect: e.target.value })}
-                  className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] font-mono outline-none"
-                >
-                  <option value="aspect-[4/5]">aspect-[4/5] (Vertical)</option>
-                  <option value="aspect-[1/1]">aspect-[1/1] (Cuadrado)</option>
-                  <option value="aspect-[3/4]">aspect-[3/4] (Vertical alto)</option>
-                  <option value="aspect-[4/3]">aspect-[4/3] (Horizontal)</option>
-                </select>
+                  onChange={(v) => setFormData({ ...formData, aspect: v })}
+                  options={[
+                    { value: 'aspect-[4/5]', label: 'aspect-[4/5] (Vertical)' },
+                    { value: 'aspect-[1/1]', label: 'aspect-[1/1] (Cuadrado)' },
+                    { value: 'aspect-[3/4]', label: 'aspect-[3/4] (Vertical alto)' },
+                    { value: 'aspect-[4/3]', label: 'aspect-[4/3] (Horizontal)' },
+                  ]}
+                />
               </div>
 
             </div>

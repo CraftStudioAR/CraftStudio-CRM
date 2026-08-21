@@ -29,6 +29,7 @@ import {
 } from 'lucide-react';
 import { getImageUrl } from '../lib/cloudinary';
 import { ImageUploader } from './ImageUploader';
+import { CustomSelect } from './CustomSelect';
 
 interface BlockBuilderProps {
   blocks: ProjectBlock[];
@@ -674,108 +675,96 @@ const BlockEditorForm: React.FC<{
               onChange={(v) => onChange({ ...block, align: v as any })}
             />
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Ancho del Bloque</label>
-              <select
-                value={block.widthMode || 'standard'}
-                onChange={(e) => onChange({ ...block, widthMode: e.target.value as any })}
-                className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none w-full h-[34px]"
-              >
-                <option value="standard">Centrado (max-w-3xl)</option>
-                <option value="full">Ancho Completo (w-full)</option>
-                <option value="auto">Auto (Ajustado al texto)</option>
-              </select>
-            </div>
+            <CustomSelect
+              label="Ancho del Bloque"
+              value={block.widthMode || 'standard'}
+              options={[
+                { value: 'standard', label: 'Centrado (max-w-3xl)' },
+                { value: 'full', label: 'Ancho Completo (w-full)' },
+                { value: 'auto', label: 'Auto (Ajustado al texto)' },
+              ]}
+              onChange={(v) => onChange({ ...block, widthMode: v as any })}
+            />
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Interletrado (Tracking)</label>
-              <select
-                value={block.tracking || 'tracking-normal'}
-                onChange={(e) => onChange({ ...block, tracking: e.target.value })}
-                className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none w-full h-[34px]"
-              >
-                <option value="tracking-tighter">Muy Ajustado</option>
-                <option value="tracking-tight">Ajustado</option>
-                <option value="tracking-normal">Normal</option>
-                <option value="tracking-wide">Ancho</option>
-                <option value="tracking-wider">Más Ancho</option>
-                <option value="tracking-widest">Expandido</option>
-              </select>
-            </div>
+            <CustomSelect
+              label="Interletrado (Tracking)"
+              value={block.tracking || 'tracking-normal'}
+              options={[
+                { value: 'tracking-tighter', label: 'Muy Ajustado' },
+                { value: 'tracking-tight', label: 'Ajustado' },
+                { value: 'tracking-normal', label: 'Normal' },
+                { value: 'tracking-wide', label: 'Ancho' },
+                { value: 'tracking-wider', label: 'Más Ancho' },
+                { value: 'tracking-widest', label: 'Expandido' },
+              ]}
+              onChange={(v) => onChange({ ...block, tracking: v })}
+            />
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Interlineado (Leading)</label>
-              <select
-                value={block.leading || 'leading-relaxed'}
-                onChange={(e) => onChange({ ...block, leading: e.target.value })}
-                className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none w-full h-[34px]"
-              >
-                <option value="leading-none">Ninguno (1.0)</option>
-                <option value="leading-tight">Ajustado (1.25)</option>
-                <option value="leading-snug">Cómodo (1.375)</option>
-                <option value="leading-normal">Normal (1.5)</option>
-                <option value="leading-relaxed">Relajado (1.625)</option>
-                <option value="leading-loose">Suelto (2.0)</option>
-              </select>
-            </div>
+            <CustomSelect
+              label="Interlineado (Leading)"
+              value={block.leading || 'leading-relaxed'}
+              options={[
+                { value: 'leading-none', label: 'Ninguno (1.0)' },
+                { value: 'leading-tight', label: 'Ajustado (1.25)' },
+                { value: 'leading-snug', label: 'Cómodo (1.375)' },
+                { value: 'leading-normal', label: 'Normal (1.5)' },
+                { value: 'leading-relaxed', label: 'Relajado (1.625)' },
+                { value: 'leading-loose', label: 'Suelto (2.0)' },
+              ]}
+              onChange={(v) => onChange({ ...block, leading: v })}
+            />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-[#E8E3E1] pt-4">
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Tamaño Mobile</label>
-              <select
-                value={block.sizeMobile || 'text-lg'}
-                onChange={(e) => onChange({ ...block, sizeMobile: e.target.value })}
-                className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none w-full"
-              >
-                <option value="text-xs">XS</option>
-                <option value="text-sm">SM</option>
-                <option value="text-base">Base</option>
-                <option value="text-lg">LG</option>
-                <option value="text-xl">XL</option>
-                <option value="text-2xl">2XL</option>
-                <option value="text-3xl">3XL</option>
-                <option value="text-4xl">4XL</option>
-              </select>
-            </div>
+            <CustomSelect
+              label="Tamaño Mobile"
+              value={block.sizeMobile || 'text-lg'}
+              options={[
+                { value: 'text-xs', label: 'XS' },
+                { value: 'text-sm', label: 'SM' },
+                { value: 'text-base', label: 'Base' },
+                { value: 'text-lg', label: 'LG' },
+                { value: 'text-xl', label: 'XL' },
+                { value: 'text-2xl', label: '2XL' },
+                { value: 'text-3xl', label: '3XL' },
+                { value: 'text-4xl', label: '4XL' },
+              ]}
+              onChange={(v) => onChange({ ...block, sizeMobile: v })}
+            />
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Tamaño Tablet</label>
-              <select
-                value={block.sizeTablet || 'text-xl'}
-                onChange={(e) => onChange({ ...block, sizeTablet: e.target.value })}
-                className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none w-full"
-              >
-                <option value="text-sm">SM</option>
-                <option value="text-base">Base</option>
-                <option value="text-lg">LG</option>
-                <option value="text-xl">XL</option>
-                <option value="text-2xl">2XL</option>
-                <option value="text-3xl">3XL</option>
-                <option value="text-4xl">4XL</option>
-                <option value="text-5xl">5XL</option>
-              </select>
-            </div>
+            <CustomSelect
+              label="Tamaño Tablet"
+              value={block.sizeTablet || 'text-xl'}
+              options={[
+                { value: 'text-sm', label: 'SM' },
+                { value: 'text-base', label: 'Base' },
+                { value: 'text-lg', label: 'LG' },
+                { value: 'text-xl', label: 'XL' },
+                { value: 'text-2xl', label: '2XL' },
+                { value: 'text-3xl', label: '3XL' },
+                { value: 'text-4xl', label: '4XL' },
+                { value: 'text-5xl', label: '5XL' },
+              ]}
+              onChange={(v) => onChange({ ...block, sizeTablet: v })}
+            />
 
-            <div className="flex flex-col gap-1.5">
-              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Tamaño Desktop</label>
-              <select
-                value={block.sizeDesktop || 'text-2xl'}
-                onChange={(e) => onChange({ ...block, sizeDesktop: e.target.value })}
-                className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none w-full"
-              >
-                <option value="text-base">Base</option>
-                <option value="text-lg">LG</option>
-                <option value="text-xl">XL</option>
-                <option value="text-2xl">2XL</option>
-                <option value="text-3xl">3XL</option>
-                <option value="text-4xl">4XL</option>
-                <option value="text-5xl">5XL</option>
-                <option value="text-6xl">6XL</option>
-                <option value="text-7xl">7XL</option>
-                <option value="text-8xl">8XL</option>
-              </select>
-            </div>
+            <CustomSelect
+              label="Tamaño Desktop"
+              value={block.sizeDesktop || 'text-2xl'}
+              options={[
+                { value: 'text-base', label: 'Base' },
+                { value: 'text-lg', label: 'LG' },
+                { value: 'text-xl', label: 'XL' },
+                { value: 'text-2xl', label: '2XL' },
+                { value: 'text-3xl', label: '3XL' },
+                { value: 'text-4xl', label: '4XL' },
+                { value: 'text-5xl', label: '5XL' },
+                { value: 'text-6xl', label: '6XL' },
+                { value: 'text-7xl', label: '7XL' },
+                { value: 'text-8xl', label: '8XL' },
+              ]}
+              onChange={(v) => onChange({ ...block, sizeDesktop: v })}
+            />
           </div>
         </div>
       );

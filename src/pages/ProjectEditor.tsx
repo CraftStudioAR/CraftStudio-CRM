@@ -3,6 +3,7 @@ import { WorkCase, ProjectBlock } from '../types';
 import { BlockBuilder } from '../components/BlockBuilder';
 import { ProjectPreview, CoverCardPreview } from '../components/ProjectPreview';
 import { ImageUploader } from '../components/ImageUploader';
+import { CustomSelect } from '../components/CustomSelect';
 import { 
   ArrowLeft, 
   Save, 
@@ -290,16 +291,16 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
 
               <div>
                 <label className="block text-xs font-medium text-[#666666] mb-1.5">Categoría / Modalidad *</label>
-                <select
+                <CustomSelect
                   value={formData.category}
-                  onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                  className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] focus:border-[#a52f18] outline-none"
-                >
-                  <option value="Build Program">Build Program</option>
-                  <option value="Shift Program">Shift Program</option>
-                  <option value="Refresh Program">Refresh Program</option>
-                  <option value="Brand Partnership">Brand Partnership</option>
-                </select>
+                  onChange={(v) => setFormData({ ...formData, category: v })}
+                  options={[
+                    { value: 'Build Program', label: 'Build Program' },
+                    { value: 'Shift Program', label: 'Shift Program' },
+                    { value: 'Refresh Program', label: 'Refresh Program' },
+                    { value: 'Brand Partnership', label: 'Brand Partnership' },
+                  ]}
+                />
               </div>
 
               <div>
@@ -406,121 +407,106 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
                     </label>
                   </div>
 
-                  {/* Interletrado (Tracking) */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Interletrado (Tracking)</label>
-                    <select
-                      value={formData.titleStyle?.tracking || 'tracking-tight'}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        titleStyle: {
-                          ...(formData.titleStyle || {}),
-                          tracking: e.target.value
-                        }
-                      })}
-                      className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] outline-none w-full"
-                    >
-                      <option value="tracking-tighter">Muy Ajustado</option>
-                      <option value="tracking-tight">Ajustado</option>
-                      <option value="tracking-normal">Normal</option>
-                      <option value="tracking-wide">Ancho</option>
-                      <option value="tracking-wider">Más Ancho</option>
-                      <option value="tracking-widest">Expandido</option>
-                    </select>
-                  </div>
+                  <CustomSelect
+                    label="Interletrado (Tracking)"
+                    value={formData.titleStyle?.tracking || 'tracking-tight'}
+                    onChange={(v) => setFormData({
+                      ...formData,
+                      titleStyle: {
+                        ...(formData.titleStyle || {}),
+                        tracking: v
+                      }
+                    })}
+                    options={[
+                      { value: 'tracking-tighter', label: 'Muy Ajustado' },
+                      { value: 'tracking-tight', label: 'Ajustado' },
+                      { value: 'tracking-normal', label: 'Normal' },
+                      { value: 'tracking-wide', label: 'Ancho' },
+                      { value: 'tracking-wider', label: 'Más Ancho' },
+                      { value: 'tracking-widest', label: 'Expandido' },
+                    ]}
+                  />
 
-                  {/* Interlineado (Leading) */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Interlineado (Leading)</label>
-                    <select
-                      value={formData.titleStyle?.leading || 'leading-[0.95]'}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        titleStyle: {
-                          ...(formData.titleStyle || {}),
-                          leading: e.target.value
-                        }
-                      })}
-                      className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] outline-none w-full"
-                    >
-                      <option value="leading-none">Ninguno (1.0)</option>
-                      <option value="leading-[0.95]">Compacto (0.95)</option>
-                      <option value="leading-tight">Ajustado (1.25)</option>
-                      <option value="leading-snug">Cómodo (1.375)</option>
-                      <option value="leading-normal">Normal (1.5)</option>
-                    </select>
-                  </div>
+                  <CustomSelect
+                    label="Interlineado (Leading)"
+                    value={formData.titleStyle?.leading || 'leading-[0.95]'}
+                    onChange={(v) => setFormData({
+                      ...formData,
+                      titleStyle: {
+                        ...(formData.titleStyle || {}),
+                        leading: v
+                      }
+                    })}
+                    options={[
+                      { value: 'leading-none', label: 'Ninguno (1.0)' },
+                      { value: 'leading-[0.95]', label: 'Compacto (0.95)' },
+                      { value: 'leading-tight', label: 'Ajustado (1.25)' },
+                      { value: 'leading-snug', label: 'Cómodo (1.375)' },
+                      { value: 'leading-normal', label: 'Normal (1.5)' },
+                    ]}
+                  />
                 </div>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
-                  {/* Tamaño Mobile */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Tamaño Mobile</label>
-                    <select
-                      value={formData.titleStyle?.sizeMobile || 'text-6xl'}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        titleStyle: {
-                          ...(formData.titleStyle || {}),
-                          sizeMobile: e.target.value
-                        }
-                      })}
-                      className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] outline-none w-full"
-                    >
-                      <option value="text-3xl">3XL</option>
-                      <option value="text-4xl">4XL</option>
-                      <option value="text-5xl">5XL</option>
-                      <option value="text-6xl">6XL</option>
-                      <option value="text-7xl">7XL</option>
-                      <option value="text-8xl">8XL</option>
-                    </select>
-                  </div>
+                  <CustomSelect
+                    label="Tamaño Mobile"
+                    value={formData.titleStyle?.sizeMobile || 'text-6xl'}
+                    onChange={(v) => setFormData({
+                      ...formData,
+                      titleStyle: {
+                        ...(formData.titleStyle || {}),
+                        sizeMobile: v
+                      }
+                    })}
+                    options={[
+                      { value: 'text-3xl', label: '3XL' },
+                      { value: 'text-4xl', label: '4XL' },
+                      { value: 'text-5xl', label: '5XL' },
+                      { value: 'text-6xl', label: '6XL' },
+                      { value: 'text-7xl', label: '7XL' },
+                      { value: 'text-8xl', label: '8XL' },
+                    ]}
+                  />
 
-                  {/* Tamaño Tablet */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Tamaño Tablet</label>
-                    <select
-                      value={formData.titleStyle?.sizeTablet || 'text-8xl'}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        titleStyle: {
-                          ...(formData.titleStyle || {}),
-                          sizeTablet: e.target.value
-                        }
-                      })}
-                      className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] outline-none w-full"
-                    >
-                      <option value="text-5xl">5XL</option>
-                      <option value="text-6xl">6XL</option>
-                      <option value="text-7xl">7XL</option>
-                      <option value="text-8xl">8XL</option>
-                      <option value="text-9xl">9XL</option>
-                      <option value="text-[9rem]">9rem</option>
-                    </select>
-                  </div>
+                  <CustomSelect
+                    label="Tamaño Tablet"
+                    value={formData.titleStyle?.sizeTablet || 'text-8xl'}
+                    onChange={(v) => setFormData({
+                      ...formData,
+                      titleStyle: {
+                        ...(formData.titleStyle || {}),
+                        sizeTablet: v
+                      }
+                    })}
+                    options={[
+                      { value: 'text-5xl', label: '5XL' },
+                      { value: 'text-6xl', label: '6XL' },
+                      { value: 'text-7xl', label: '7XL' },
+                      { value: 'text-8xl', label: '8XL' },
+                      { value: 'text-9xl', label: '9XL' },
+                      { value: 'text-[9rem]', label: '9rem' },
+                    ]}
+                  />
 
-                  {/* Tamaño Desktop */}
-                  <div className="flex flex-col gap-1.5">
-                    <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Tamaño Desktop</label>
-                    <select
-                      value={formData.titleStyle?.sizeDesktop || 'text-[9rem]'}
-                      onChange={(e) => setFormData({
-                        ...formData,
-                        titleStyle: {
-                          ...(formData.titleStyle || {}),
-                          sizeDesktop: e.target.value
-                        }
-                      })}
-                      className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] outline-none w-full"
-                    >
-                      <option value="text-6xl">6XL</option>
-                      <option value="text-7xl">7XL</option>
-                      <option value="text-8xl">8XL</option>
-                      <option value="text-9xl">9XL</option>
-                      <option value="text-[9rem]">9rem</option>
-                      <option value="text-[10rem]">10rem</option>
-                    </select>
-                  </div>
+                  <CustomSelect
+                    label="Tamaño Desktop"
+                    value={formData.titleStyle?.sizeDesktop || 'text-[9rem]'}
+                    onChange={(v) => setFormData({
+                      ...formData,
+                      titleStyle: {
+                        ...(formData.titleStyle || {}),
+                        sizeDesktop: v
+                      }
+                    })}
+                    options={[
+                      { value: 'text-6xl', label: '6XL' },
+                      { value: 'text-7xl', label: '7XL' },
+                      { value: 'text-8xl', label: '8XL' },
+                      { value: 'text-9xl', label: '9XL' },
+                      { value: 'text-[9rem]', label: '9rem' },
+                      { value: 'text-[10rem]', label: '10rem' },
+                    ]}
+                  />
                 </div>
               </div>
             </div>
