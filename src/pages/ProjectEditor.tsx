@@ -236,7 +236,7 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
               )}
               
               <div className={`${previewDevice !== 'desktop' ? 'p-4' : ''}`}>
-                <ProjectPreview project={formData} />
+                <ProjectPreview project={formData} device={previewDevice} />
               </div>
             </div>
           </div>

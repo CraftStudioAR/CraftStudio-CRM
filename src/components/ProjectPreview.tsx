@@ -167,7 +167,7 @@ function Testimonial({ quote, author, role }: { quote: string; author: string; r
 // ─────────────────────────────────────────────
 // Block renderer — copia exacta de ProjectBlocks.tsx
 // ─────────────────────────────────────────────
-export function Block({ block }: { block: ProjectBlock }) {
+export function Block({ block, device = 'desktop' }: { block: ProjectBlock; device?: 'desktop' | 'tablet' | 'mobile' }) {
   switch (block.type) {
     case 'image':
       return <Img publicId={block.image.publicId} alt={block.image.alt} />;
@@ -296,7 +296,14 @@ export function Block({ block }: { block: ProjectBlock }) {
       const sizeTablet = block.sizeTablet || 'text-base';
       const sizeDesktop = block.sizeDesktop || 'text-base';
 
-      const textClass = `text-ink/80 text-${block.align || 'left'} ${fontFamily} ${boldClass} ${italicClass} ${trackingClass} ${leadingClass} ${sizeMobile} md:${sizeTablet} lg:${sizeDesktop}`;
+      const resolvedSizeClass = 
+        device === 'mobile'
+          ? sizeMobile
+          : device === 'tablet'
+          ? sizeTablet
+          : `${sizeMobile} md:${sizeTablet} lg:${sizeDesktop}`;
+
+      const textClass = `text-ink/80 text-${block.align || 'left'} ${fontFamily} ${boldClass} ${italicClass} ${trackingClass} ${leadingClass} ${resolvedSizeClass}`;
 
       return (
         <div className={containerClass}>
@@ -359,7 +366,7 @@ export const CoverCardPreview: React.FC<{ project: Partial<WorkCase> }> = ({ pro
 // ─────────────────────────────────────────────
 // Full Preview — replica exacta de TrabajoDetalle
 // ─────────────────────────────────────────────
-export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
+export const ProjectPreview: React.FC<ProjectPreviewProps & { device?: 'desktop' | 'tablet' | 'mobile' }> = ({ project, device = 'desktop' }) => {
   const [isFullScreen, setIsFullScreen] = useState(false);
   const blocks = project.blocks || [];
   const mainTitle = project.title ?? project.client ?? 'Nombre del Cliente';
@@ -372,7 +379,7 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
     return (
       <div className="flex flex-col gap-6 md:gap-10" style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {blocks.map((block, i) => (
-          <Block key={i} block={block} />
+          <Block key={i} block={block} device={device} />
         ))}
       </div>
     );
@@ -411,11 +418,11 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
                 } ${
                   project.titleStyle?.leading || 'leading-[0.95]'
                 } ${
-                  project.titleStyle?.sizeMobile || 'text-4xl'
-                } md:${
-                  project.titleStyle?.sizeTablet || 'text-6xl'
-                } lg:${
-                  project.titleStyle?.sizeDesktop || 'text-[9rem]'
+                  device === 'mobile'
+                    ? (project.titleStyle?.sizeMobile || 'text-4xl')
+                    : device === 'tablet'
+                    ? (project.titleStyle?.sizeTablet || 'text-6xl')
+                    : `${project.titleStyle?.sizeMobile || 'text-4xl'} md:${project.titleStyle?.sizeTablet || 'text-6xl'} lg:${project.titleStyle?.sizeDesktop || 'text-[9rem]'}`
                 }`}
               >
                 {mainTitle}

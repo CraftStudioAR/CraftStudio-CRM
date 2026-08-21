@@ -231,7 +231,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
                 {formData.blocks && formData.blocks.length > 0 ? (
                   <div className="flex flex-col gap-6 md:gap-10 mt-8">
                     {formData.blocks.map((block, index) => (
-                      <Block key={index} block={block} />
+                      <Block key={index} block={block} device={previewDevice} />
                     ))}
                   </div>
                 ) : (
