@@ -693,7 +693,7 @@ export const ProjectPreview: React.FC<ProjectPreviewProps & { device?: 'desktop'
                     {project.scope.map((item, i) => (
                       <span
                         key={i}
-                        className="px-3 py-1.5 rounded text-xs font-medium bg-black/5 border border-black/10"
+                        className="px-3 py-1.5 rounded-lg text-xs font-medium bg-black/5 border border-black/10"
                       >
                         {item}
                       </span>
