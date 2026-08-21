@@ -408,7 +408,12 @@ export async function seedSupabase(): Promise<{ success: boolean; error?: string
 }
 
 export async function saveProjectsOrder(slugs: string[]): Promise<{ success: boolean; error?: string }> {
-  let brandLogos: any[] = [];
+  const defaultLogos = [
+    { publicId: 'yokoo_jdzsmb', alt: 'Yokoo Studio' },
+    { publicId: 'sunkiss_l22ice', alt: 'Sunkiss' },
+    { publicId: 'nomade_zhi6vi', alt: 'Nómade Café' },
+  ];
+  let brandLogos: any[] = defaultLogos;
   if (isSupabaseConfigured && supabase) {
     try {
       const { data } = await supabase
@@ -418,7 +423,7 @@ export async function saveProjectsOrder(slugs: string[]): Promise<{ success: boo
         .maybeSingle();
       if (data && data.description) {
         const parsed = JSON.parse(data.description);
-        if (Array.isArray(parsed.brandLogos)) {
+        if (Array.isArray(parsed.brandLogos) && parsed.brandLogos.length > 0) {
           brandLogos = parsed.brandLogos;
         }
       }
@@ -427,7 +432,10 @@ export async function saveProjectsOrder(slugs: string[]): Promise<{ success: boo
     const logoRaw = localStorage.getItem('craftstudio_crm_brand_logos');
     if (logoRaw) {
       try {
-        brandLogos = JSON.parse(logoRaw);
+        const parsed = JSON.parse(logoRaw);
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          brandLogos = parsed;
+        }
       } catch (e) {}
     }
   }
@@ -493,6 +501,12 @@ export async function saveArticlesOrder(slugs: string[], sortMode: 'date' | 'cus
 }
 
 export async function fetchBrandLogos(): Promise<Array<{ publicId: string; alt: string }>> {
+  const defaultLogos = [
+    { publicId: 'yokoo_jdzsmb', alt: 'Yokoo Studio' },
+    { publicId: 'sunkiss_l22ice', alt: 'Sunkiss' },
+    { publicId: 'nomade_zhi6vi', alt: 'Nómade Café' },
+  ];
+
   if (isSupabaseConfigured && supabase) {
     try {
       const { data, error } = await supabase
@@ -503,27 +517,26 @@ export async function fetchBrandLogos(): Promise<Array<{ publicId: string; alt: 
 
       if (!error && data && data.description) {
         const parsed = JSON.parse(data.description);
-        if (Array.isArray(parsed.brandLogos)) {
+        if (Array.isArray(parsed.brandLogos) && parsed.brandLogos.length > 0) {
           return parsed.brandLogos;
         }
       }
     } catch (e) {
-      // Ignore
+      console.warn('Failed to fetch brand logos from Supabase', e);
     }
   }
 
   const orderRaw = localStorage.getItem('craftstudio_crm_brand_logos');
   if (orderRaw) {
     try {
-      return JSON.parse(orderRaw);
+      const parsed = JSON.parse(orderRaw);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
     } catch (e) {}
   }
 
-  return [
-    { publicId: 'yokoo_jdzsmb', alt: 'Yokoo Studio' },
-    { publicId: 'sunkiss_l22ice', alt: 'Sunkiss' },
-    { publicId: 'nomade_zhi6vi', alt: 'Nómade Café' },
-  ];
+  return defaultLogos;
 }
 
 export async function saveBrandLogos(logos: Array<{ publicId: string; alt: string }>): Promise<{ success: boolean; error?: string }> {
