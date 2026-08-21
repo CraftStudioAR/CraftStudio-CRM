@@ -45,6 +45,15 @@ export type ProjectBlock =
       layout?: ColumnSplit;
       textAlign?: TextAlign;
       heightFrom?: "text" | "image";
+      mobileOrder?: 'imageFirst' | 'textFirst';
+      fontFamily?: 'serif' | 'sans';
+      bold?: boolean;
+      italic?: boolean;
+      sizeMobile?: string;
+      sizeTablet?: string;
+      sizeDesktop?: string;
+      tracking?: string;
+      leading?: string;
     }
   | {
       type: "keywords";

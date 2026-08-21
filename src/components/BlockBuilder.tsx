@@ -955,10 +955,11 @@ const BlockEditorForm: React.FC<{
               className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3.5 py-2.5 text-xs text-[#000000] outline-none resize-y focus:border-[#a52f18] transition-colors"
             />
           </div>
-          <SectionDivider label="Diseño y Layout" />
-          <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+
+          <SectionDivider label="Orden y Posición" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <ToggleGroup
-              label="Posición de la imagen"
+              label="Posición de la imagen (Desktop)"
               value={block.imagePosition || 'left'}
               options={[
                 { value: 'left', label: '← Izquierda' },
@@ -967,42 +968,137 @@ const BlockEditorForm: React.FC<{
               onChange={(v) => onChange({ ...block, imagePosition: v as 'left' | 'right' })}
             />
             <ToggleGroup
-              label="Proporción img / texto"
+              label="Orden al apilar (Mobile / Tablet)"
+              value={block.mobileOrder || 'imageFirst'}
+              options={[
+                { value: 'imageFirst', label: 'Imagen primero' },
+                { value: 'textFirst', label: 'Texto primero' },
+              ]}
+              onChange={(v) => onChange({ ...block, mobileOrder: v as 'imageFirst' | 'textFirst' })}
+            />
+          </div>
+
+          <SectionDivider label="Layout y Proporciones" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <ToggleGroup
+              label="Proporción img / texto (Desktop)"
               value={block.layout || '50/50'}
               options={SPLIT_OPTIONS}
               onChange={(v) => onChange({ ...block, layout: v })}
             />
-            <div>
-              <label className="block text-[11px] font-medium text-[#888] mb-1.5 uppercase tracking-wide">
-                Alineación del texto
-              </label>
-              <div className="flex gap-1.5">
-                {ALIGN_OPTIONS.map((opt) => (
-                  <button
-                    key={opt.value}
-                    type="button"
-                    onClick={() => onChange({ ...block, textAlign: opt.value })}
-                    className={`flex items-center justify-center w-9 h-9 rounded-lg border transition-all ${
-                      (block.textAlign || 'left') === opt.value
-                        ? 'bg-[#a52f18] text-white border-[#a52f18]'
-                        : 'bg-white text-[#444] border-[#E8E3E1] hover:border-[#a52f18]/40'
-                    }`}
-                  >
-                    {opt.icon}
-                  </button>
-                ))}
+            <ToggleGroup
+              label="Altura del bloque determinada por"
+              value={block.heightFrom || 'image'}
+              options={[
+                { value: 'image', label: 'Imagen' },
+                { value: 'text', label: 'Texto' },
+              ]}
+              onChange={(v) => onChange({ ...block, heightFrom: v as 'text' | 'image' })}
+            />
+          </div>
+
+          <SectionDivider label="Formato y Estilo de Texto" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#F5EFEF]/40 border border-[#E8E3E1] rounded-2xl p-4">
+            <div className="flex flex-col gap-3">
+              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Formato de Texto</label>
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#666666]">
+                  <input
+                    type="checkbox"
+                    checked={block.bold || false}
+                    onChange={(e) => onChange({ ...block, bold: e.target.checked })}
+                    className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                  />
+                  Negrita (Bold)
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#666666]">
+                  <input
+                    type="checkbox"
+                    checked={block.italic || false}
+                    onChange={(e) => onChange({ ...block, italic: e.target.checked })}
+                    className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                  />
+                  Itálica (Italic)
+                </label>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Familia de Fuente</label>
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#666666]">
+                  <input
+                    type="checkbox"
+                    checked={block.fontFamily === 'sans'}
+                    onChange={(e) => onChange({ ...block, fontFamily: e.target.checked ? 'sans' : 'serif' })}
+                    className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                  />
+                  Fuente Sans (p. ej. Instrument Sans)
+                </label>
               </div>
             </div>
           </div>
-          <ToggleGroup
-            label="Altura del bloque determinada por"
-            value={block.heightFrom || 'image'}
-            options={[
-              { value: 'image', label: 'Imagen' },
-              { value: 'text', label: 'Texto' },
-            ]}
-            onChange={(v) => onChange({ ...block, heightFrom: v as 'text' | 'image' })}
-          />
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <ToggleGroup
+              label="Alineación"
+              value={block.textAlign || 'left'}
+              options={[
+                { value: 'left', label: 'Izquierda', icon: <AlignLeft className="w-3 h-3" /> },
+                { value: 'center', label: 'Centro', icon: <AlignCenter className="w-3 h-3" /> },
+                { value: 'right', label: 'Derecha', icon: <AlignRight className="w-3 h-3" /> },
+              ]}
+              onChange={(v) => onChange({ ...block, textAlign: v as any })}
+            />
+
+            <CustomSelect
+              label="Interletrado (Tracking)"
+              value={block.tracking || 'tracking-normal'}
+              options={[
+                { value: 'tracking-tighter', label: 'Muy Ajustado' },
+                { value: 'tracking-tight', label: 'Ajustado' },
+                { value: 'tracking-normal', label: 'Normal' },
+                { value: 'tracking-wide', label: 'Ancho' },
+                { value: 'tracking-wider', label: 'Más Ancho' },
+                { value: 'tracking-widest', label: 'Expandido' },
+              ]}
+              onChange={(v) => onChange({ ...block, tracking: v })}
+            />
+
+            <CustomSelect
+              label="Interlineado (Leading)"
+              value={block.leading || 'leading-relaxed'}
+              options={[
+                { value: 'leading-none', label: 'Ninguno (1.0)' },
+                { value: 'leading-tight', label: 'Ajustado (1.25)' },
+                { value: 'leading-snug', label: 'Cómodo (1.375)' },
+                { value: 'leading-normal', label: 'Normal (1.5)' },
+                { value: 'leading-relaxed', label: 'Relajado (1.625)' },
+                { value: 'leading-loose', label: 'Suelto (2.0)' },
+              ]}
+              onChange={(v) => onChange({ ...block, leading: v })}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-[#E8E3E1] pt-4">
+            <SizeInputWithPresets
+              label="Tamaño Mobile"
+              value={block.sizeMobile || 'text-sm'}
+              onChange={(v) => onChange({ ...block, sizeMobile: v })}
+            />
+
+            <SizeInputWithPresets
+              label="Tamaño Tablet"
+              value={block.sizeTablet || 'text-base'}
+              onChange={(v) => onChange({ ...block, sizeTablet: v })}
+            />
+
+            <SizeInputWithPresets
+              label="Tamaño Desktop"
+              value={block.sizeDesktop || 'text-base'}
+              onChange={(v) => onChange({ ...block, sizeDesktop: v })}
+            />
+          </div>
         </div>
       );
 

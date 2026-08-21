@@ -98,17 +98,65 @@ function Img({
 // ─────────────────────────────────────────────
 // TextBox — idéntico al del frontend
 // ─────────────────────────────────────────────
-function TextBox({ text }: { text: string }) {
+function TextBox({
+  text,
+  className = "",
+  fontFamily = 'serif',
+  bold = false,
+  italic = false,
+  sizeMobile = 'text-sm',
+  sizeTablet = 'text-base',
+  sizeDesktop = 'text-base',
+  tracking = 'tracking-normal',
+  leading = 'leading-relaxed',
+  textAlign = 'left',
+  device = 'desktop',
+}: {
+  text: string;
+  className?: string;
+  fontFamily?: 'serif' | 'sans';
+  bold?: boolean;
+  italic?: boolean;
+  sizeMobile?: string;
+  sizeTablet?: string;
+  sizeDesktop?: string;
+  tracking?: string;
+  leading?: string;
+  textAlign?: 'left' | 'center' | 'right';
+  device?: 'desktop' | 'tablet' | 'mobile';
+}) {
+  const boldClass = bold ? 'font-bold' : 'font-normal';
+  const italicClass = italic ? 'italic' : 'not-italic';
+  const trackingClass = tracking || 'tracking-normal';
+  const leadingClass = leading || 'leading-relaxed';
+  const fontFamilyClass = fontFamily === 'sans' ? 'font-sans' : 'font-serif';
+  
+  const elementId = `text-box-preview-${Math.random().toString(36).substr(2, 9)}`;
+
   return (
     <div
-      className="flex flex-col justify-center gap-4 rounded-2xl p-8"
+      className={`flex flex-col justify-center gap-4 rounded-2xl p-8 ${className}`}
       style={{ border: '1px solid rgba(0,0,0,0.10)', background: 'rgba(0,0,0,0.02)' }}
     >
-      {text.split('\n\n').map((paragraph, i) => (
-        <p key={i} style={{ fontSize: '1.125rem', lineHeight: '1.7', color: 'rgba(0,0,0,0.8)' }}>
-          {paragraph}
-        </p>
-      ))}
+      {text.split('\n\n').map((paragraph, idx) => {
+        const pId = `${elementId}-${idx}`;
+        const { className: resolvedSizeClass, style: sizeStyle, styleElement } = getResponsiveTextStyle(
+          pId,
+          sizeMobile,
+          sizeTablet,
+          sizeDesktop,
+          device
+        );
+        const textClass = `text-ink/80 text-${textAlign} ${fontFamilyClass} ${boldClass} ${italicClass} ${trackingClass} ${leadingClass} ${resolvedSizeClass}`;
+        return (
+          <React.Fragment key={idx}>
+            {styleElement}
+            <p id={pId} className={textClass} style={sizeStyle}>
+              {paragraph}
+            </p>
+          </React.Fragment>
+        );
+      })}
     </div>
   );
 }
@@ -279,14 +327,46 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
     case 'imageText': {
       const heightFromImage = block.heightFrom === 'image';
       const isMobile = device === 'mobile';
-      const cols = isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-2 gap-6';
+      
+      const isOrderTextFirst = isMobile 
+        ? block.mobileOrder === 'textFirst'
+        : block.imagePosition === 'right';
+        
+      const imageOrderClass = isOrderTextFirst ? 'order-2' : 'order-1';
+      const textOrderClass = isOrderTextFirst ? 'order-1' : 'order-2';
+      
+      // Resolve proportions layout
+      const layoutOption = block.layout || '50/50';
+      let resolvedLayout = layoutOption;
+      if (!isMobile && isOrderTextFirst) {
+        if (layoutOption === '30/70') resolvedLayout = '70/30';
+        else if (layoutOption === '40/60') resolvedLayout = '60/40';
+        else if (layoutOption === '60/40') resolvedLayout = '40/60';
+        else if (layoutOption === '70/30') resolvedLayout = '30/70';
+        else if (layoutOption === '66/34') resolvedLayout = '34/66';
+        else if (layoutOption === '34/66') resolvedLayout = '66/34';
+      }
+
+      const layoutClasses: Record<string, string> = {
+        '30/70': 'grid-cols-[3fr_7fr]',
+        '40/60': 'grid-cols-[4fr_6fr]',
+        '50/50': 'grid-cols-2',
+        '60/40': 'grid-cols-[6fr_4fr]',
+        '70/30': 'grid-cols-[7fr_3fr]',
+        '66/34': 'grid-cols-[66fr_34fr]',
+        '34/66': 'grid-cols-[34fr_66fr]',
+      };
+      
+      const gridColClass = isMobile ? 'grid-cols-1' : (layoutClasses[resolvedLayout] || 'grid-cols-2');
+      const gapClass = isMobile ? 'gap-3' : (device === 'tablet' ? 'gap-4' : 'gap-6');
+
       return (
-        <div className={`grid items-stretch ${cols}`}>
+        <div className={`grid items-stretch ${gapClass} ${gridColClass}`}>
           {heightFromImage ? (
-            <Img publicId={block.image.publicId} alt={block.image.alt} />
+            <Img publicId={block.image.publicId} alt={block.image.alt} className={imageOrderClass} />
           ) : (
             <div
-              className="relative w-full overflow-hidden rounded-2xl"
+              className={`relative w-full overflow-hidden rounded-2xl ${imageOrderClass}`}
               style={{ aspectRatio: '4 / 3' }}
             >
               <img
@@ -296,7 +376,20 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
               />
             </div>
           )}
-          <TextBox text={block.text} />
+          <TextBox
+            text={block.text}
+            className={textOrderClass}
+            fontFamily={block.fontFamily}
+            bold={block.bold}
+            italic={block.italic}
+            sizeMobile={block.sizeMobile}
+            sizeTablet={block.sizeTablet}
+            sizeDesktop={block.sizeDesktop}
+            tracking={block.tracking}
+            leading={block.leading}
+            textAlign={block.textAlign}
+            device={device}
+          />
         </div>
       );
     }
