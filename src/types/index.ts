@@ -31,7 +31,7 @@ export type ProjectBlock =
     }
   | {
       type: "imagePair";
-      images: [ProjectImage, ProjectImage];
+      images: ProjectImage[];
       mobileLayout?: "pair" | "stack";
       split?: ColumnSplit;
       aspect?: AspectRatioOption;

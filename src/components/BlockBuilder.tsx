@@ -524,11 +524,10 @@ const BlockSummaryPreview: React.FC<{ block: ProjectBlock }> = ({ block }) => {
       return (
         <div className="flex items-center gap-3">
           <div className="flex -space-x-2">
-            {imgThumb(block.images[0]?.publicId, 'Img 1')}
-            {imgThumb(block.images[1]?.publicId, 'Img 2')}
+            {block.images.map((img, i) => imgThumb(img?.publicId, `Img ${i + 1}`))}
           </div>
           <span className="text-xs text-[#000000]">
-            {block.split || '50/50'} · {block.mobileLayout === 'stack' ? 'Apiladas en mobile' : 'Fila en mobile'}
+            {block.images.length} imágenes · {block.mobileLayout === 'stack' ? 'Apiladas en mobile' : 'Fila en mobile'}
           </span>
         </div>
       );
@@ -816,28 +815,47 @@ const BlockEditorForm: React.FC<{
         </div>
       );
 
-    case 'imagePair':
+    case 'imagePair': {
+      const imagesCount = block.images?.length || 2;
       return (
         <div className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-            <ImageInputGroup
-              label="Imagen Izquierda"
-              image={block.images[0]}
-              onChange={(img) => {
-                const imgs = [...block.images] as [ProjectImage, ProjectImage];
-                imgs[0] = img;
-                onChange({ ...block, images: imgs });
+          <div className="flex items-center gap-4">
+            <ToggleGroup
+              label="Cantidad de imágenes"
+              value={String(imagesCount)}
+              options={[
+                { value: '2', label: '2 imágenes' },
+                { value: '3', label: '3 imágenes' },
+                { value: '4', label: '4 imágenes' },
+              ]}
+              onChange={(v) => {
+                const newCount = parseInt(v);
+                const currentImages = [...(block.images || [])];
+                if (currentImages.length < newCount) {
+                  while (currentImages.length < newCount) {
+                    currentImages.push({ publicId: '', alt: '' });
+                  }
+                } else if (currentImages.length > newCount) {
+                  currentImages.splice(newCount);
+                }
+                onChange({ ...block, images: currentImages });
               }}
             />
-            <ImageInputGroup
-              label="Imagen Derecha"
-              image={block.images[1]}
-              onChange={(img) => {
-                const imgs = [...block.images] as [ProjectImage, ProjectImage];
-                imgs[1] = img;
-                onChange({ ...block, images: imgs });
-              }}
-            />
+          </div>
+          
+          <div className={`grid grid-cols-1 md:grid-cols-${imagesCount} gap-3`}>
+            {block.images.map((img, i) => (
+              <ImageInputGroup
+                key={i}
+                label={i === 0 ? 'Imagen Izquierda' : i === 1 ? 'Imagen Derecha' : `Imagen ${i + 1}`}
+                image={img}
+                onChange={(newImg) => {
+                  const imgs = [...block.images];
+                  imgs[i] = newImg;
+                  onChange({ ...block, images: imgs });
+                }}
+              />
+            ))}
           </div>
           <SectionDivider label="Diseño" />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -874,6 +892,7 @@ const BlockEditorForm: React.FC<{
           </label>
         </div>
       );
+    }
 
     case 'imageFeature':
       return (

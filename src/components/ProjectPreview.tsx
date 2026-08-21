@@ -249,11 +249,13 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
         );
       }
       const stackOnMobile = block.mobileLayout === 'stack';
+      const count = block.images.length;
+      const desktopCols = count === 4 ? 'md:grid-cols-4' : count === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2';
+      const mobileCols = stackOnMobile ? 'grid-cols-1' : (count === 4 ? 'grid-cols-4' : count === 3 ? 'grid-cols-3' : 'grid-cols-2');
+
       return (
         <div
-          className={`grid items-stretch gap-3 md:grid-cols-2 md:gap-6 ${
-            stackOnMobile ? 'grid-cols-1' : 'grid-cols-2'
-          }`}
+          className={`grid items-stretch gap-3 md:gap-6 ${desktopCols} ${mobileCols}`}
         >
           {block.images.map((img, i) => (
             <Img
