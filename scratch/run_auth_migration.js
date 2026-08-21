@@ -52,35 +52,33 @@ async function main() {
     // 2. Check if text block already exists
     const alreadyHasDescription = blocks.some(b => b.type === 'text' && b.text && b.text.includes(text.substring(0, 30)));
 
+    const descBlock = {
+      type: "text",
+      text: text,
+      hasContainer: true,
+      widthMode: "full",
+      align: "left",
+      fontFamily: "sans",
+      bold: false,
+      italic: false,
+      sizeMobile: "text-lg",
+      sizeTablet: "text-xl",
+      sizeDesktop: "text-2xl",
+      tracking: "tracking-normal",
+      leading: "leading-relaxed"
+    };
+
     if (alreadyHasDescription) {
-      console.log(`Already has description block. Checking position...`);
+      console.log(`Already has description block. Overwriting properties to force full-width...`);
       const currentIdx = blocks.findIndex(b => b.type === 'text' && b.text && b.text.includes(text.substring(0, 30)));
+      blocks[currentIdx] = descBlock;
       if (currentIdx !== 1 && blocks.length > 1) {
         console.log(`Moving block to index 1...`);
-        const descBlock = blocks.splice(currentIdx, 1)[0];
+        blocks.splice(currentIdx, 1);
         blocks.splice(1, 0, descBlock);
-      } else {
-        console.log(`Position is correct.`);
-        continue;
       }
     } else {
       console.log(`Inserting description block at index 1...`);
-      const descBlock = {
-        type: "text",
-        text: text,
-        hasContainer: true,
-        widthMode: "standard",
-        align: "left",
-        fontFamily: "sans",
-        bold: false,
-        italic: false,
-        sizeMobile: "text-lg",
-        sizeTablet: "text-xl",
-        sizeDesktop: "text-2xl",
-        tracking: "tracking-normal",
-        leading: "leading-relaxed"
-      };
-
       if (blocks.length > 0) {
         blocks.splice(1, 0, descBlock);
       } else {
