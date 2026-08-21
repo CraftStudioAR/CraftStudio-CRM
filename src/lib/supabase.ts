@@ -408,11 +408,35 @@ export async function seedSupabase(): Promise<{ success: boolean; error?: string
 }
 
 export async function saveProjectsOrder(slugs: string[]): Promise<{ success: boolean; error?: string }> {
+  let brandLogos: any[] = [];
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data } = await supabase
+        .from('projects')
+        .select('description')
+        .eq('slug', '__settings__')
+        .maybeSingle();
+      if (data && data.description) {
+        const parsed = JSON.parse(data.description);
+        if (Array.isArray(parsed.brandLogos)) {
+          brandLogos = parsed.brandLogos;
+        }
+      }
+    } catch (e) {}
+  } else {
+    const logoRaw = localStorage.getItem('craftstudio_crm_brand_logos');
+    if (logoRaw) {
+      try {
+        brandLogos = JSON.parse(logoRaw);
+      } catch (e) {}
+    }
+  }
+
   const payload = {
     slug: '__settings__',
     client: 'Settings',
     title: 'Custom Order Settings',
-    description: JSON.stringify({ customOrder: slugs, isCustomOrderActive: true }),
+    description: JSON.stringify({ customOrder: slugs, isCustomOrderActive: true, brandLogos }),
     category: 'Build Program',
     year: '2026',
     summary: 'System metadata row',
@@ -465,6 +489,87 @@ export async function saveArticlesOrder(slugs: string[], sortMode: 'date' | 'cus
   }
 
   localStorage.setItem('craftstudio_crm_articles_order', JSON.stringify({ customOrder: slugs, sortMode }));
+  return { success: true };
+}
+
+export async function fetchBrandLogos(): Promise<Array<{ publicId: string; alt: string }>> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { data, error } = await supabase
+        .from('projects')
+        .select('description')
+        .eq('slug', '__settings__')
+        .maybeSingle();
+
+      if (!error && data && data.description) {
+        const parsed = JSON.parse(data.description);
+        if (Array.isArray(parsed.brandLogos)) {
+          return parsed.brandLogos;
+        }
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }
+
+  const orderRaw = localStorage.getItem('craftstudio_crm_brand_logos');
+  if (orderRaw) {
+    try {
+      return JSON.parse(orderRaw);
+    } catch (e) {}
+  }
+
+  return [
+    { publicId: 'yokoo_jdzsmb', alt: 'Yokoo Studio' },
+    { publicId: 'sunkiss_l22ice', alt: 'Sunkiss' },
+    { publicId: 'nomade_zhi6vi', alt: 'Nómade Café' },
+  ];
+}
+
+export async function saveBrandLogos(logos: Array<{ publicId: string; alt: string }>): Promise<{ success: boolean; error?: string }> {
+  if (isSupabaseConfigured && supabase) {
+    try {
+      let customOrder: string[] = [];
+      const { data } = await supabase
+        .from('projects')
+        .select('description')
+        .eq('slug', '__settings__')
+        .maybeSingle();
+      
+      if (data && data.description) {
+        try {
+          const parsed = JSON.parse(data.description);
+          if (Array.isArray(parsed.customOrder)) {
+            customOrder = parsed.customOrder;
+          }
+        } catch (e) {}
+      }
+
+      const payload = {
+        slug: '__settings__',
+        client: 'Settings',
+        title: 'Custom Order Settings',
+        description: JSON.stringify({ customOrder, isCustomOrderActive: customOrder.length > 0, brandLogos: logos }),
+        category: 'Build Program',
+        year: '2026',
+        summary: 'System metadata row',
+        scope: [],
+        cover: null,
+        blocks: [],
+        updated_at: new Date().toISOString(),
+      };
+
+      const { error } = await supabase
+        .from('projects')
+        .upsert(payload, { onConflict: 'slug' });
+
+      if (error) return { success: false, error: error.message };
+    } catch (err: any) {
+      return { success: false, error: err?.message || 'Error updating logos' };
+    }
+  }
+
+  localStorage.setItem('craftstudio_crm_brand_logos', JSON.stringify(logos));
   return { success: true };
 }
 
