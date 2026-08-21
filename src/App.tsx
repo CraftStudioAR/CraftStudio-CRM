@@ -7,6 +7,8 @@ import {
   fetchArticles, 
   saveArticle, 
   deleteArticle,
+  saveProjectsOrder,
+  saveArticlesOrder,
   supabase,
   isSupabaseConfigured
 } from './lib/supabase';
@@ -70,6 +72,14 @@ export function App() {
     setActiveTab('project-editor');
   };
 
+  const handleSaveProjectsOrder = async (slugs: string[]) => {
+    const res = await saveProjectsOrder(slugs);
+    if (res.success) {
+      await loadData();
+    }
+    return res;
+  };
+
   const handleOpenEditProject = (project: WorkCase) => {
     setEditingProject(project);
     setActiveTab('project-editor');
@@ -111,6 +121,14 @@ export function App() {
 
   const handleSaveArticle = async (article: CraftLabArticle) => {
     const res = await saveArticle(article);
+    if (res.success) {
+      await loadData();
+    }
+    return res;
+  };
+
+  const handleSaveArticlesOrder = async (slugs: string[], sortMode: 'date' | 'custom') => {
+    const res = await saveArticlesOrder(slugs, sortMode);
     if (res.success) {
       await loadData();
     }
@@ -186,6 +204,7 @@ export function App() {
                 onNewProject={handleOpenNewProject}
                 onDeleteProject={handleDeleteProject}
                 onDuplicateProject={handleDuplicateProject}
+                onSaveOrder={handleSaveProjectsOrder}
               />
             )}
 
@@ -203,6 +222,7 @@ export function App() {
                 onEditArticle={handleOpenEditArticle}
                 onNewArticle={handleOpenNewArticle}
                 onDeleteArticle={handleDeleteArticle}
+                onSaveOrder={handleSaveArticlesOrder}
               />
             )}
 

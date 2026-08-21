@@ -45,7 +45,22 @@ export async function fetchProjects(): Promise<WorkCase[]> {
         .order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        return data.map((item) => {
+        const settingsRow = data.find((item) => item.slug === '__settings__');
+        let customOrder: string[] = [];
+        try {
+          if (settingsRow && settingsRow.description) {
+            const parsed = JSON.parse(settingsRow.description);
+            if (Array.isArray(parsed.customOrder)) {
+              customOrder = parsed.customOrder;
+            }
+          }
+        } catch (e) {
+          // Ignore
+        }
+
+        const projectsOnly = data.filter((item) => item.slug !== '__settings__');
+
+        const mappedProjects = projectsOnly.map((item) => {
           let titleStyle = undefined;
           try {
             if (item.description && item.description.trim().startsWith('{')) {
@@ -63,15 +78,44 @@ export async function fetchProjects(): Promise<WorkCase[]> {
             titleStyle,
           };
         });
+
+        if (customOrder.length > 0) {
+          mappedProjects.sort((a, b) => {
+            const idxA = customOrder.indexOf(a.slug);
+            const idxB = customOrder.indexOf(b.slug);
+            const posA = idxA === -1 ? 99999 : idxA;
+            const posB = idxB === -1 ? 99999 : idxB;
+            return posA - posB;
+          });
+        }
+
+        return mappedProjects;
       }
     } catch (e) {
       console.warn('Supabase fetch failed, falling back to LocalStorage', e);
     }
   }
 
-  // Fallback to LocalStorage
   const raw = localStorage.getItem(LOCAL_STORAGE_PROJECTS_KEY);
-  return raw ? JSON.parse(raw) : INITIAL_PROJECTS;
+  const projects: WorkCase[] = raw ? JSON.parse(raw) : INITIAL_PROJECTS;
+
+  const orderRaw = localStorage.getItem('craftstudio_crm_projects_order');
+  if (orderRaw) {
+    try {
+      const customOrder = JSON.parse(orderRaw) as string[];
+      projects.sort((a, b) => {
+        const idxA = customOrder.indexOf(a.slug);
+        const idxB = customOrder.indexOf(b.slug);
+        const posA = idxA === -1 ? 99999 : idxA;
+        const posB = idxB === -1 ? 99999 : idxB;
+        return posA - posB;
+      });
+    } catch (e) {
+      // Ignore
+    }
+  }
+
+  return projects.filter((p) => p.slug !== '__settings__');
 }
 
 export async function saveProject(project: WorkCase): Promise<{ success: boolean; error?: string }> {
@@ -147,10 +191,47 @@ export async function fetchArticles(): Promise<CraftLabArticle[]> {
         .order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        return data.map((item) => ({
+        const settingsRow = data.find((item) => item.slug === '__settings__');
+        let customOrder: string[] = [];
+        let sortMode: 'date' | 'custom' = 'date';
+        try {
+          if (settingsRow && settingsRow.desc) {
+            const parsed = JSON.parse(settingsRow.desc);
+            if (Array.isArray(parsed.customOrder)) {
+              customOrder = parsed.customOrder;
+            }
+            if (parsed.sortMode) {
+              sortMode = parsed.sortMode;
+            }
+          }
+        } catch (e) {
+          // Ignore
+        }
+
+        const articlesOnly = data.filter((item) => item.slug !== '__settings__');
+
+        const mappedArticles = articlesOnly.map((item) => ({
           ...item,
           blocks: typeof item.blocks === 'string' ? JSON.parse(item.blocks) : item.blocks || [],
         }));
+
+        if (sortMode === 'custom' && customOrder.length > 0) {
+          mappedArticles.sort((a, b) => {
+            const idxA = customOrder.indexOf(a.slug);
+            const idxB = customOrder.indexOf(b.slug);
+            const posA = idxA === -1 ? 99999 : idxA;
+            const posB = idxB === -1 ? 99999 : idxB;
+            return posA - posB;
+          });
+        } else {
+          mappedArticles.sort((a, b) => {
+            const dateA = new Date(a.created_at || a.date || 0).getTime();
+            const dateB = new Date(b.created_at || b.date || 0).getTime();
+            return dateB - dateA;
+          });
+        }
+
+        return mappedArticles;
       }
     } catch (e) {
       console.warn('Supabase fetch articles failed, falling back to LocalStorage', e);
@@ -158,7 +239,36 @@ export async function fetchArticles(): Promise<CraftLabArticle[]> {
   }
 
   const raw = localStorage.getItem(LOCAL_STORAGE_ARTICLES_KEY);
-  return raw ? JSON.parse(raw) : INITIAL_ARTICLES;
+  const articles: CraftLabArticle[] = raw ? JSON.parse(raw) : INITIAL_ARTICLES;
+
+  const orderRaw = localStorage.getItem('craftstudio_crm_articles_order');
+  if (orderRaw) {
+    try {
+      const parsed = JSON.parse(orderRaw);
+      const customOrder = parsed.customOrder as string[];
+      const sortMode = parsed.sortMode as 'date' | 'custom';
+
+      if (sortMode === 'custom' && customOrder.length > 0) {
+        articles.sort((a, b) => {
+          const idxA = customOrder.indexOf(a.slug);
+          const idxB = customOrder.indexOf(b.slug);
+          const posA = idxA === -1 ? 99999 : idxA;
+          const posB = idxB === -1 ? 99999 : idxB;
+          return posA - posB;
+        });
+      } else {
+        articles.sort((a, b) => {
+          const dateA = new Date(a.created_at || a.date || 0).getTime();
+          const dateB = new Date(b.created_at || b.date || 0).getTime();
+          return dateB - dateA;
+        });
+      }
+    } catch (e) {
+      // Ignore
+    }
+  }
+
+  return articles.filter((a) => a.slug !== '__settings__');
 }
 
 export async function saveArticle(article: CraftLabArticle): Promise<{ success: boolean; error?: string }> {
@@ -295,5 +405,66 @@ export async function seedSupabase(): Promise<{ success: boolean; error?: string
   } catch (err: any) {
     return { success: false, error: err?.message || 'Error de conexión' };
   }
+}
+
+export async function saveProjectsOrder(slugs: string[]): Promise<{ success: boolean; error?: string }> {
+  const payload = {
+    slug: '__settings__',
+    client: 'Settings',
+    title: 'Custom Order Settings',
+    description: JSON.stringify({ customOrder: slugs, isCustomOrderActive: true }),
+    category: 'Build Program',
+    year: '2026',
+    summary: 'System metadata row',
+    scope: [],
+    cover: null,
+    blocks: [],
+    updated_at: new Date().toISOString(),
+  };
+
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { error } = await supabase
+        .from('projects')
+        .upsert(payload, { onConflict: 'slug' });
+
+      if (error) return { success: false, error: error.message };
+    } catch (err: any) {
+      return { success: false, error: err?.message || 'Error updating order' };
+    }
+  }
+
+  localStorage.setItem('craftstudio_crm_projects_order', JSON.stringify(slugs));
+  return { success: true };
+}
+
+export async function saveArticlesOrder(slugs: string[], sortMode: 'date' | 'custom'): Promise<{ success: boolean; error?: string }> {
+  const payload = {
+    id: '00000000-0000-0000-0000-000000000000',
+    slug: '__settings__',
+    title: 'Custom Order Settings',
+    date: '2026',
+    category: 'Estrategia',
+    image: '',
+    desc: JSON.stringify({ customOrder: slugs, sortMode }),
+    content: 'System metadata row',
+    blocks: [],
+    updated_at: new Date().toISOString(),
+  };
+
+  if (isSupabaseConfigured && supabase) {
+    try {
+      const { error } = await supabase
+        .from('craft_lab_articles')
+        .upsert(payload, { onConflict: 'slug' });
+
+      if (error) return { success: false, error: error.message };
+    } catch (err: any) {
+      return { success: false, error: err?.message || 'Error updating order' };
+    }
+  }
+
+  localStorage.setItem('craftstudio_crm_articles_order', JSON.stringify({ customOrder: slugs, sortMode }));
+  return { success: true };
 }
 
