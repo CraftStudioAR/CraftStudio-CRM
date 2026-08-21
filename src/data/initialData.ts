@@ -26,6 +26,21 @@ export const INITIAL_PROJECTS: WorkCase[] = [
         image: { publicId: "2_nzdgkt", alt: "Perfil con gorro tejido Yokoo Studio y campera verde lima sobre un fondo de montañas nevadas" },
       },
       {
+        type: "text",
+        text: "Yokoo Studio atravesaba una etapa de crecimiento y necesitaba que su comunicación evolucionara al mismo ritmo que el negocio. Entre 2023 y septiembre de 2025 trabajamos de forma cercana con los fundadores y en articulación con las distintas áreas de la marca, desarrollando una estrategia de comunicación con enfoque en Growth Marketing.",
+        hasContainer: true,
+        widthMode: "standard",
+        align: "left",
+        fontFamily: "sans",
+        bold: false,
+        italic: false,
+        sizeMobile: "text-lg",
+        sizeTablet: "text-xl",
+        sizeDesktop: "text-2xl",
+        tracking: "tracking-normal",
+        leading: "leading-relaxed"
+      },
+      {
         type: "imagePair",
         mobileLayout: "pair",
         images: [
@@ -112,6 +127,21 @@ export const INITIAL_PROJECTS: WorkCase[] = [
           { publicId: "1_m9fjpj", alt: "Vaso de café con leche sobre una mesa azul con el logo de Nómade" },
           { publicId: "4_g9ac1n", alt: "Cartel de neón Los nómades también descansan sobre el sillón del salón" },
         ],
+      },
+      {
+        type: "text",
+        text: "Luego de su rebranding, Nómade necesitaba transformar su nueva identidad en una comunicación que conectara con las personas. Trabajamos junto al equipo de la marca para desarrollar una estrategia de contenido que diera continuidad al nuevo posicionamiento, llevando esa identidad al día a día a través de fotografía, video y una línea editorial coherente.",
+        hasContainer: true,
+        widthMode: "standard",
+        align: "left",
+        fontFamily: "sans",
+        bold: false,
+        italic: false,
+        sizeMobile: "text-lg",
+        sizeTablet: "text-xl",
+        sizeDesktop: "text-2xl",
+        tracking: "tracking-normal",
+        leading: "leading-relaxed"
       },
       {
         type: "imageText",
@@ -241,6 +271,21 @@ export const INITIAL_PROJECTS: WorkCase[] = [
         ],
       },
       {
+        type: "text",
+        text: "Realizada en colaboración con Adon, esta producción nace de la búsqueda por desarrollar un lenguaje visual de carácter editorial. Más que retratar modelos, el objetivo fue construir una serie de imágenes con una identidad estética definida, donde cada decisión de arte, estilismo y composición aportara a una narrativa común.",
+        hasContainer: true,
+        widthMode: "standard",
+        align: "left",
+        fontFamily: "sans",
+        bold: false,
+        italic: false,
+        sizeMobile: "text-lg",
+        sizeTablet: "text-xl",
+        sizeDesktop: "text-2xl",
+        tracking: "tracking-normal",
+        leading: "leading-relaxed"
+      },
+      {
         type: "imagePair",
         mobileLayout: "pair",
         images: [
@@ -266,6 +311,21 @@ export const INITIAL_PROJECTS: WorkCase[] = [
       {
         type: "image",
         image: { publicId: "Etiqueta_Vino_1_jwbjnl", alt: "Barriles de roble en la bodega, cartel HORNOS" },
+      },
+      {
+        type: "text",
+        text: "Este proyecto nace como un homenaje a Emily Dickinson y a uno de sus poemas más emblemáticos: Hope is the thing with feathers. Más que diseñar una etiqueta, el objetivo fue transformar una obra literaria en una experiencia visual capaz de transmitir la sensibilidad de la autora y convertir la botella en un objeto narrativo.",
+        hasContainer: true,
+        widthMode: "standard",
+        align: "left",
+        fontFamily: "sans",
+        bold: false,
+        italic: false,
+        sizeMobile: "text-lg",
+        sizeTablet: "text-xl",
+        sizeDesktop: "text-2xl",
+        tracking: "tracking-normal",
+        leading: "leading-relaxed"
       },
       {
         type: "imageFeature",
