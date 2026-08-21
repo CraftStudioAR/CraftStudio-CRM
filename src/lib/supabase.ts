@@ -45,12 +45,24 @@ export async function fetchProjects(): Promise<WorkCase[]> {
         .order('created_at', { ascending: false });
 
       if (!error && data && data.length > 0) {
-        return data.map((item) => ({
-          ...item,
-          scope: typeof item.scope === 'string' ? JSON.parse(item.scope) : item.scope,
-          cover: typeof item.cover === 'string' ? JSON.parse(item.cover) : item.cover,
-          blocks: typeof item.blocks === 'string' ? JSON.parse(item.blocks) : item.blocks,
-        }));
+        return data.map((item) => {
+          let titleStyle = undefined;
+          try {
+            if (item.description && item.description.trim().startsWith('{')) {
+              const parsed = JSON.parse(item.description);
+              titleStyle = parsed.titleStyle;
+            }
+          } catch (e) {
+            // Ignore
+          }
+          return {
+            ...item,
+            scope: typeof item.scope === 'string' ? JSON.parse(item.scope) : item.scope,
+            cover: typeof item.cover === 'string' ? JSON.parse(item.cover) : item.cover,
+            blocks: typeof item.blocks === 'string' ? JSON.parse(item.blocks) : item.blocks,
+            titleStyle,
+          };
+        });
       }
     } catch (e) {
       console.warn('Supabase fetch failed, falling back to LocalStorage', e);
@@ -72,7 +84,7 @@ export async function saveProject(project: WorkCase): Promise<{ success: boolean
         category: project.category,
         year: project.year,
         summary: project.summary,
-        description: project.description || '',
+        description: project.titleStyle ? JSON.stringify({ titleStyle: project.titleStyle }) : '',
         scope: project.scope || [],
         cover: project.cover || null,
         blocks: project.blocks || [],

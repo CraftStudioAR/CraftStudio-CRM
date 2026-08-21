@@ -272,14 +272,42 @@ export function Block({ block }: { block: ProjectBlock }) {
     case 'testimonial':
       return <Testimonial quote={block.quote} author={block.author} role={block.role} />;
 
-    case 'text':
+    case 'text': {
+      const containerWidth = 
+        block.widthMode === 'full' 
+          ? 'w-full' 
+          : block.widthMode === 'auto' 
+            ? 'w-fit max-w-full' 
+            : 'max-w-3xl';
+
+      const containerClass = `mx-auto w-full px-6 md:px-0 my-4 ${containerWidth} ${
+        block.hasContainer 
+          ? 'rounded-2xl border border-ink/10 bg-ink/[0.02] p-8 md:p-10 flex flex-col gap-4 shadow-sm' 
+          : ''
+      }`;
+
+      const boldClass = block.bold ? 'font-bold' : 'font-normal';
+      const italicClass = block.italic ? 'italic' : 'not-italic';
+      const trackingClass = block.tracking || 'tracking-normal';
+      const leadingClass = block.leading || 'leading-relaxed';
+      const fontFamily = block.fontFamily === 'sans' ? 'font-sans' : 'font-serif';
+      
+      const sizeMobile = block.sizeMobile || 'text-sm';
+      const sizeTablet = block.sizeTablet || 'text-base';
+      const sizeDesktop = block.sizeDesktop || 'text-base';
+
+      const textClass = `text-ink/80 text-${block.align || 'left'} ${fontFamily} ${boldClass} ${italicClass} ${trackingClass} ${leadingClass} ${sizeMobile} md:${sizeTablet} lg:${sizeDesktop}`;
+
       return (
-        <div className="max-w-3xl mx-auto w-full px-6 md:px-0 my-4">
-          <p className={`text-sm md:text-base text-ink leading-relaxed font-serif text-${block.align || 'left'} whitespace-pre-line`}>
-            {block.text}
-          </p>
+        <div className={containerClass}>
+          {block.text.split('\n\n').map((paragraph, idx) => (
+            <p key={idx} className={textClass}>
+              {paragraph}
+            </p>
+          ))}
         </div>
       );
+    }
 
     default:
       return null;
@@ -337,35 +365,13 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
   const mainTitle = project.title ?? project.client ?? 'Nombre del Cliente';
   const mainTitleLen = mainTitle.length;
 
-  const descriptionElement = project.description ? (
-    <div className="px-6 pb-10 md:px-10" style={{ maxWidth: '1400px', margin: '0 auto' }}>
-      <div
-        className="rounded-2xl p-8 md:p-10"
-        style={{ border: '1px solid rgba(0,0,0,0.10)', background: 'rgba(0,0,0,0.02)' }}
-      >
-        {project.description.split('\n\n').map((para, i) => (
-          <p key={i} style={{ fontSize: '1.125rem', lineHeight: '1.7', color: 'rgba(0,0,0,0.8)' }}>
-            {para}
-          </p>
-        ))}
-      </div>
-    </div>
-  ) : null;
-
   const renderBlocks = () => {
     if (blocks.length === 0) {
-      return descriptionElement;
+      return null;
     }
     return (
       <div className="flex flex-col gap-6 md:gap-10" style={{ maxWidth: '1400px', margin: '0 auto' }}>
-        {/* Render first block */}
-        <Block block={blocks[0]} />
-        
-        {/* Intercalate description after the first block */}
-        {descriptionElement}
-        
-        {/* Render remaining blocks */}
-        {blocks.slice(1).map((block, i) => (
+        {blocks.map((block, i) => (
           <Block key={i} block={block} />
         ))}
       </div>
@@ -396,10 +402,21 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
             {/* LEFT — título + summary */}
             <div className="lg:col-span-7 flex flex-col gap-4 md:gap-5">
               <h1
-                className="font-serif italic leading-[0.95] tracking-tight text-[#0a0424]"
-                style={{
-                  fontSize: mainTitleLen > 28 ? 'clamp(2.5rem, 6vw, 5rem)' : 'clamp(3.5rem, 8vw, 8rem)',
-                }}
+                className={`font-serif text-[#0a0424] text-balance ${
+                  project.titleStyle?.bold ? 'font-bold' : 'font-normal'
+                } ${
+                  project.titleStyle?.italic !== false ? 'italic' : 'not-italic'
+                } ${
+                  project.titleStyle?.tracking || 'tracking-tight'
+                } ${
+                  project.titleStyle?.leading || 'leading-[0.95]'
+                } ${
+                  project.titleStyle?.sizeMobile || 'text-4xl'
+                } md:${
+                  project.titleStyle?.sizeTablet || 'text-6xl'
+                } lg:${
+                  project.titleStyle?.sizeDesktop || 'text-[9rem]'
+                }`}
               >
                 {mainTitle}
               </h1>
@@ -471,14 +488,14 @@ export const ProjectPreview: React.FC<ProjectPreviewProps> = ({ project }) => {
       </section>
 
       {/* ── Blocks gallery ── */}
-      {(blocks.length > 0 || project.description) && (
+      {blocks.length > 0 && (
         <section className="px-6 pb-24 md:px-10">
           {renderBlocks()}
         </section>
       )}
 
       {/* Empty state */}
-      {blocks.length === 0 && !project.description && !project.client && (
+      {blocks.length === 0 && !project.client && (
         <div className="py-20 text-center px-8" style={{ color: 'rgba(0,0,0,0.30)', fontFamily: 'monospace', fontSize: '0.875rem' }}>
           Completá los datos y bloques para ver la previsualización
         </div>

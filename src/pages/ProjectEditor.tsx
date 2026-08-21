@@ -34,10 +34,18 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
     category: 'Shift Program',
     year: '2025',
     summary: '',
-    description: '',
     scope: [],
     cover: { publicId: '', alt: '' },
     blocks: [],
+    titleStyle: {
+      bold: false,
+      italic: true,
+      sizeDesktop: 'text-[9rem]',
+      sizeTablet: 'text-8xl',
+      sizeMobile: 'text-6xl',
+      tracking: 'tracking-tight',
+      leading: 'leading-[0.95]'
+    }
   });
 
   const [newScopeTag, setNewScopeTag] = useState('');
@@ -48,7 +56,19 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
 
   useEffect(() => {
     if (initialProject) {
-      setFormData(JSON.parse(JSON.stringify(initialProject)));
+      const data = JSON.parse(JSON.stringify(initialProject));
+      if (!data.titleStyle) {
+        data.titleStyle = {
+          bold: false,
+          italic: true,
+          sizeDesktop: 'text-[9rem]',
+          sizeTablet: 'text-8xl',
+          sizeMobile: 'text-6xl',
+          tracking: 'tracking-tight',
+          leading: 'leading-[0.95]'
+        };
+      }
+      setFormData(data);
     }
   }, [initialProject]);
 
@@ -344,15 +364,164 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
                 />
               </div>
 
-              <div>
-                <label className="block text-xs font-medium text-[#666666] mb-1.5">Descripción Detallada (Página interna del caso)</label>
-                <textarea
-                  rows={4}
-                  value={formData.description || ''}
-                  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                  placeholder="Explicación extendida del desafío, contexto y desarrollo estratégico..."
-                  className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3.5 py-2.5 text-xs text-[#000000] outline-none resize-y font-serif text-sm"
-                />
+              {/* Estilos del Título del Caso */}
+              <div className="bg-[#F5EFEF]/50 border border-[#E8E3E1] rounded-2xl p-6 space-y-5">
+                <div className="flex items-center gap-3">
+                  <span className="w-1.5 h-6 bg-[#a52f18] rounded-full" />
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#000000]">Estilos del Título (Detalle del Caso)</h4>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
+                  {/* Negrita & Cursiva */}
+                  <div className="flex items-center gap-6 bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-4 py-2.5">
+                    <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#666666]">
+                      <input 
+                        type="checkbox"
+                        checked={formData.titleStyle?.bold || false}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          titleStyle: {
+                            ...(formData.titleStyle || {}),
+                            bold: e.target.checked
+                          }
+                        })}
+                        className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                      />
+                      Negrita (Bold)
+                    </label>
+                    <label className="flex items-center gap-2 cursor-pointer text-xs font-medium text-[#666666]">
+                      <input 
+                        type="checkbox"
+                        checked={formData.titleStyle?.italic !== false}
+                        onChange={(e) => setFormData({
+                          ...formData,
+                          titleStyle: {
+                            ...(formData.titleStyle || {}),
+                            italic: e.target.checked
+                          }
+                        })}
+                        className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                      />
+                      Itálica
+                    </label>
+                  </div>
+
+                  {/* Interletrado (Tracking) */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Interletrado (Tracking)</label>
+                    <select
+                      value={formData.titleStyle?.tracking || 'tracking-tight'}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        titleStyle: {
+                          ...(formData.titleStyle || {}),
+                          tracking: e.target.value
+                        }
+                      })}
+                      className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] outline-none w-full"
+                    >
+                      <option value="tracking-tighter">Muy Ajustado</option>
+                      <option value="tracking-tight">Ajustado</option>
+                      <option value="tracking-normal">Normal</option>
+                      <option value="tracking-wide">Ancho</option>
+                      <option value="tracking-wider">Más Ancho</option>
+                      <option value="tracking-widest">Expandido</option>
+                    </select>
+                  </div>
+
+                  {/* Interlineado (Leading) */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Interlineado (Leading)</label>
+                    <select
+                      value={formData.titleStyle?.leading || 'leading-[0.95]'}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        titleStyle: {
+                          ...(formData.titleStyle || {}),
+                          leading: e.target.value
+                        }
+                      })}
+                      className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] outline-none w-full"
+                    >
+                      <option value="leading-none">Ninguno (1.0)</option>
+                      <option value="leading-[0.95]">Compacto (0.95)</option>
+                      <option value="leading-tight">Ajustado (1.25)</option>
+                      <option value="leading-snug">Cómodo (1.375)</option>
+                      <option value="leading-normal">Normal (1.5)</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                  {/* Tamaño Mobile */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Tamaño Mobile</label>
+                    <select
+                      value={formData.titleStyle?.sizeMobile || 'text-6xl'}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        titleStyle: {
+                          ...(formData.titleStyle || {}),
+                          sizeMobile: e.target.value
+                        }
+                      })}
+                      className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] outline-none w-full"
+                    >
+                      <option value="text-3xl">3XL</option>
+                      <option value="text-4xl">4XL</option>
+                      <option value="text-5xl">5XL</option>
+                      <option value="text-6xl">6XL</option>
+                      <option value="text-7xl">7XL</option>
+                      <option value="text-8xl">8XL</option>
+                    </select>
+                  </div>
+
+                  {/* Tamaño Tablet */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Tamaño Tablet</label>
+                    <select
+                      value={formData.titleStyle?.sizeTablet || 'text-8xl'}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        titleStyle: {
+                          ...(formData.titleStyle || {}),
+                          sizeTablet: e.target.value
+                        }
+                      })}
+                      className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] outline-none w-full"
+                    >
+                      <option value="text-5xl">5XL</option>
+                      <option value="text-6xl">6XL</option>
+                      <option value="text-7xl">7XL</option>
+                      <option value="text-8xl">8XL</option>
+                      <option value="text-9xl">9XL</option>
+                      <option value="text-[9rem]">9rem</option>
+                    </select>
+                  </div>
+
+                  {/* Tamaño Desktop */}
+                  <div className="flex flex-col gap-1.5">
+                    <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Tamaño Desktop</label>
+                    <select
+                      value={formData.titleStyle?.sizeDesktop || 'text-[9rem]'}
+                      onChange={(e) => setFormData({
+                        ...formData,
+                        titleStyle: {
+                          ...(formData.titleStyle || {}),
+                          sizeDesktop: e.target.value
+                        }
+                      })}
+                      className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2.5 text-xs text-[#000000] outline-none w-full"
+                    >
+                      <option value="text-6xl">6XL</option>
+                      <option value="text-7xl">7XL</option>
+                      <option value="text-8xl">8XL</option>
+                      <option value="text-9xl">9XL</option>
+                      <option value="text-[9rem]">9rem</option>
+                      <option value="text-[10rem]">10rem</option>
+                    </select>
+                  </div>
+                </div>
               </div>
             </div>
 

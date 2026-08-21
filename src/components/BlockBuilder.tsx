@@ -608,18 +608,174 @@ const BlockEditorForm: React.FC<{
               className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3.5 py-2.5 text-xs text-[#000000] outline-none font-serif text-sm leading-relaxed resize-y"
             />
           </div>
-          <SectionDivider label="Diseño" />
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          
+          <SectionDivider label="Diseño & Formato" />
+          
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#F5EFEF]/40 border border-[#E8E3E1] rounded-2xl p-4">
+            {/* Aspectos de texto: Negrita, Cursiva, Familia de Fuente, Caja */}
+            <div className="flex flex-col gap-3">
+              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Formato de Texto</label>
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#666666]">
+                  <input
+                    type="checkbox"
+                    checked={block.bold || false}
+                    onChange={(e) => onChange({ ...block, bold: e.target.checked })}
+                    className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                  />
+                  Negrita (Bold)
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#666666]">
+                  <input
+                    type="checkbox"
+                    checked={block.italic || false}
+                    onChange={(e) => onChange({ ...block, italic: e.target.checked })}
+                    className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                  />
+                  Itálica (Italic)
+                </label>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Estructura</label>
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#666666]">
+                  <input
+                    type="checkbox"
+                    checked={block.fontFamily === 'sans'}
+                    onChange={(e) => onChange({ ...block, fontFamily: e.target.checked ? 'sans' : 'serif' })}
+                    className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                  />
+                  Fuente Sans (p. ej. Instrument Sans)
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#666666]">
+                  <input
+                    type="checkbox"
+                    checked={block.hasContainer || false}
+                    onChange={(e) => onChange({ ...block, hasContainer: e.target.checked })}
+                    className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                  />
+                  Con Contenedor (Caja Gris)
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             <ToggleGroup
-              label="Alineación de Texto"
+              label="Alineación"
               value={block.align || 'left'}
               options={[
                 { value: 'left', label: 'Izquierda', icon: <AlignLeft className="w-3 h-3" /> },
                 { value: 'center', label: 'Centro', icon: <AlignCenter className="w-3 h-3" /> },
                 { value: 'right', label: 'Derecha', icon: <AlignRight className="w-3 h-3" /> },
               ]}
-              onChange={(v) => onChange({ ...block, align: v })}
+              onChange={(v) => onChange({ ...block, align: v as any })}
             />
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Ancho del Bloque</label>
+              <select
+                value={block.widthMode || 'standard'}
+                onChange={(e) => onChange({ ...block, widthMode: e.target.value as any })}
+                className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none w-full h-[34px]"
+              >
+                <option value="standard">Centrado (max-w-3xl)</option>
+                <option value="full">Ancho Completo (w-full)</option>
+                <option value="auto">Auto (Ajustado al texto)</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Interletrado (Tracking)</label>
+              <select
+                value={block.tracking || 'tracking-normal'}
+                onChange={(e) => onChange({ ...block, tracking: e.target.value })}
+                className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none w-full h-[34px]"
+              >
+                <option value="tracking-tighter">Muy Ajustado</option>
+                <option value="tracking-tight">Ajustado</option>
+                <option value="tracking-normal">Normal</option>
+                <option value="tracking-wide">Ancho</option>
+                <option value="tracking-wider">Más Ancho</option>
+                <option value="tracking-widest">Expandido</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Interlineado (Leading)</label>
+              <select
+                value={block.leading || 'leading-relaxed'}
+                onChange={(e) => onChange({ ...block, leading: e.target.value })}
+                className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none w-full h-[34px]"
+              >
+                <option value="leading-none">Ninguno (1.0)</option>
+                <option value="leading-tight">Ajustado (1.25)</option>
+                <option value="leading-snug">Cómodo (1.375)</option>
+                <option value="leading-normal">Normal (1.5)</option>
+                <option value="leading-relaxed">Relajado (1.625)</option>
+                <option value="leading-loose">Suelto (2.0)</option>
+              </select>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-[#E8E3E1] pt-4">
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Tamaño Mobile</label>
+              <select
+                value={block.sizeMobile || 'text-lg'}
+                onChange={(e) => onChange({ ...block, sizeMobile: e.target.value })}
+                className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none w-full"
+              >
+                <option value="text-xs">XS</option>
+                <option value="text-sm">SM</option>
+                <option value="text-base">Base</option>
+                <option value="text-lg">LG</option>
+                <option value="text-xl">XL</option>
+                <option value="text-2xl">2XL</option>
+                <option value="text-3xl">3XL</option>
+                <option value="text-4xl">4XL</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Tamaño Tablet</label>
+              <select
+                value={block.sizeTablet || 'text-xl'}
+                onChange={(e) => onChange({ ...block, sizeTablet: e.target.value })}
+                className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none w-full"
+              >
+                <option value="text-sm">SM</option>
+                <option value="text-base">Base</option>
+                <option value="text-lg">LG</option>
+                <option value="text-xl">XL</option>
+                <option value="text-2xl">2XL</option>
+                <option value="text-3xl">3XL</option>
+                <option value="text-4xl">4XL</option>
+                <option value="text-5xl">5XL</option>
+              </select>
+            </div>
+
+            <div className="flex flex-col gap-1.5">
+              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Tamaño Desktop</label>
+              <select
+                value={block.sizeDesktop || 'text-2xl'}
+                onChange={(e) => onChange({ ...block, sizeDesktop: e.target.value })}
+                className="bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none w-full"
+              >
+                <option value="text-base">Base</option>
+                <option value="text-lg">LG</option>
+                <option value="text-xl">XL</option>
+                <option value="text-2xl">2XL</option>
+                <option value="text-3xl">3XL</option>
+                <option value="text-4xl">4XL</option>
+                <option value="text-5xl">5XL</option>
+                <option value="text-6xl">6XL</option>
+                <option value="text-7xl">7XL</option>
+                <option value="text-8xl">8XL</option>
+              </select>
+            </div>
           </div>
         </div>
       );
