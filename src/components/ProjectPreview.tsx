@@ -333,13 +333,17 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
 
       const containerClass = `mx-auto w-full my-4 ${containerWidth} ${
         block.hasContainer 
-          ? 'rounded-2xl p-8 md:p-10 flex flex-col gap-4 shadow-sm' 
+          ? 'rounded-2xl p-8 md:p-10 shadow-sm' 
           : 'px-6 md:px-0'
       }`;
 
       const containerStyle = block.hasContainer
         ? { border: '1px solid rgba(0,0,0,0.10)', background: 'rgba(0,0,0,0.02)' }
         : undefined;
+
+      const innerClass = (block.hasContainer && block.widthMode === 'full')
+        ? 'max-w-3xl mx-auto w-full flex flex-col gap-4'
+        : 'w-full flex flex-col gap-4';
 
       const boldClass = block.bold ? 'font-bold' : 'font-normal';
       const italicClass = block.italic ? 'italic' : 'not-italic';
@@ -355,25 +359,27 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
 
       return (
         <div className={containerClass} style={containerStyle}>
-          {block.text.split('\n\n').map((paragraph, idx) => {
-            const pId = `${elementId}-${idx}`;
-            const { className: resolvedSizeClass, style: sizeStyle, styleElement } = getResponsiveTextStyle(
-              pId,
-              sizeMobile,
-              sizeTablet,
-              sizeDesktop,
-              device
-            );
-            const textClass = `text-ink/80 text-${block.align || 'left'} ${fontFamily} ${boldClass} ${italicClass} ${trackingClass} ${leadingClass} ${resolvedSizeClass}`;
-            return (
-              <React.Fragment key={idx}>
-                {styleElement}
-                <p id={pId} className={textClass} style={sizeStyle}>
-                  {paragraph}
-                </p>
-              </React.Fragment>
-            );
-          })}
+          <div className={innerClass}>
+            {block.text.split('\n\n').map((paragraph, idx) => {
+              const pId = `${elementId}-${idx}`;
+              const { className: resolvedSizeClass, style: sizeStyle, styleElement } = getResponsiveTextStyle(
+                pId,
+                sizeMobile,
+                sizeTablet,
+                sizeDesktop,
+                device
+              );
+              const textClass = `text-ink/80 text-${block.align || 'left'} ${fontFamily} ${boldClass} ${italicClass} ${trackingClass} ${leadingClass} ${resolvedSizeClass}`;
+              return (
+                <React.Fragment key={idx}>
+                  {styleElement}
+                  <p id={pId} className={textClass} style={sizeStyle}>
+                    {paragraph}
+                  </p>
+                </React.Fragment>
+              );
+            })}
+          </div>
         </div>
       );
     }
