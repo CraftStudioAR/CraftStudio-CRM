@@ -223,23 +223,28 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
     case 'image':
       return <Img publicId={block.image.publicId} alt={block.image.alt} />;
 
-    case 'imageFeature':
+    case 'imageFeature': {
+      const isMobile = device === 'mobile';
+      const gridCols = isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-2 gap-6';
+      const stackedCols = isMobile ? 'grid-cols-2 gap-3' : 'grid-cols-1 gap-6';
       return (
-        <div className="grid grid-cols-1 gap-3 md:grid-cols-2 md:gap-6 items-stretch">
+        <div className={`grid ${gridCols} items-stretch`}>
           <Img publicId={block.main.publicId} alt={block.main.alt} className="h-full" imgClassName="h-full object-cover" />
-          <div className="grid grid-cols-2 gap-3 self-start md:grid-cols-1 md:gap-6">
+          <div className={`grid ${stackedCols} self-start`}>
             {block.stacked.map((img, i) => (
               <Img key={i} publicId={img.publicId} alt={img.alt} />
             ))}
           </div>
         </div>
       );
+    }
 
     case 'imagePair': {
-      // matchHeight: anchos proporcionales al ratio de cada foto
+      const isMobile = device === 'mobile';
       if (block.matchHeight && block.images.every((img) => img.ratio)) {
+        const pairGap = isMobile ? 'gap-3' : 'gap-6';
         return (
-          <div className="flex items-start gap-3 md:gap-6">
+          <div className={`flex items-start ${pairGap}`}>
             {block.images.map((img, i) => (
               <div key={i} className="min-w-0" style={{ flex: `${img.ratio} 1 0%` }}>
                 <Img publicId={img.publicId} alt={img.alt} />
@@ -250,13 +255,13 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
       }
       const stackOnMobile = block.mobileLayout === 'stack';
       const count = block.images.length;
-      const desktopCols = count === 4 ? 'md:grid-cols-4' : count === 3 ? 'md:grid-cols-3' : 'md:grid-cols-2';
-      const mobileCols = stackOnMobile ? 'grid-cols-1' : (count === 4 ? 'grid-cols-4' : count === 3 ? 'grid-cols-3' : 'grid-cols-2');
+      const cols = isMobile 
+        ? (stackOnMobile ? 'grid-cols-1' : (count === 4 ? 'grid-cols-4' : count === 3 ? 'grid-cols-3' : 'grid-cols-2'))
+        : (count === 4 ? 'grid-cols-4' : count === 3 ? 'grid-cols-3' : 'grid-cols-2');
+      const gap = isMobile ? 'gap-3' : 'gap-6';
 
       return (
-        <div
-          className={`grid items-stretch gap-3 md:gap-6 ${desktopCols} ${mobileCols}`}
-        >
+        <div className={`grid items-stretch ${gap} ${cols}`}>
           {block.images.map((img, i) => (
             <Img
               key={i}
@@ -273,8 +278,10 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
 
     case 'imageText': {
       const heightFromImage = block.heightFrom === 'image';
+      const isMobile = device === 'mobile';
+      const cols = isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-2 gap-6';
       return (
-        <div className="grid grid-cols-1 items-stretch gap-3 md:grid-cols-2 md:gap-6">
+        <div className={`grid items-stretch ${cols}`}>
           {heightFromImage ? (
             <Img publicId={block.image.publicId} alt={block.image.alt} />
           ) : (
@@ -446,8 +453,9 @@ export const ProjectPreview: React.FC<ProjectPreviewProps & { device?: 'desktop'
     if (blocks.length === 0) {
       return null;
     }
+    const blocksGap = device === 'mobile' ? 'gap-6' : 'gap-10';
     return (
-      <div className="flex flex-col gap-6 md:gap-10" style={{ maxWidth: '1400px', margin: '0 auto' }}>
+      <div className={`flex flex-col ${blocksGap}`} style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {blocks.map((block, i) => (
           <Block key={i} block={block} device={device} />
         ))}
@@ -471,10 +479,10 @@ export const ProjectPreview: React.FC<ProjectPreviewProps & { device?: 'desktop'
       </div>
 
       {/* ── Hero: título + info lateral ── */}
-      <section className="px-6 pb-16 md:px-10 md:pb-28">
+      <section className={`px-6 pb-16 ${device === 'mobile' ? 'pb-12' : 'md:px-10 md:pb-28'}`}>
         <div style={{ maxWidth: '1400px', margin: '0 auto' }}>
           {/* Two-column layout on large screens */}
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20">
+          <div className={`grid ${device === 'mobile' || device === 'tablet' ? 'grid-cols-1 gap-12' : 'grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-20'}`}>
 
             {/* LEFT — título + summary */}
             <div className="lg:col-span-7 flex flex-col gap-4 md:gap-5">
