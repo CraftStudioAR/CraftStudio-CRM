@@ -62,11 +62,15 @@ export async function fetchProjects(): Promise<WorkCase[]> {
 
         const mappedProjects = projectsOnly.map((item) => {
           let titleStyle = undefined;
+          let clientStyle = undefined;
+          let summaryStyle = undefined;
           let featured = false;
           try {
             if (item.description && item.description.trim().startsWith('{')) {
               const parsed = JSON.parse(item.description);
               titleStyle = parsed.titleStyle;
+              clientStyle = parsed.clientStyle;
+              summaryStyle = parsed.summaryStyle;
               featured = parsed.featured || false;
             }
           } catch (e) {
@@ -78,6 +82,8 @@ export async function fetchProjects(): Promise<WorkCase[]> {
             cover: typeof item.cover === 'string' ? JSON.parse(item.cover) : item.cover,
             blocks: typeof item.blocks === 'string' ? JSON.parse(item.blocks) : item.blocks,
             titleStyle,
+            clientStyle,
+            summaryStyle,
             featured,
           };
         });
@@ -133,6 +139,8 @@ export async function saveProject(project: WorkCase): Promise<{ success: boolean
         summary: project.summary,
         description: JSON.stringify({
           titleStyle: project.titleStyle,
+          clientStyle: project.clientStyle,
+          summaryStyle: project.summaryStyle,
           featured: project.featured || false,
         }),
         scope: project.scope || [],

@@ -33,9 +33,11 @@ const SIZE_PRESETS = [
   { value: 'text-3xl', label: '3XL' },
   { value: 'text-4xl', label: '4XL' },
   { value: 'text-5xl', label: '5XL' },
-  { value: 'text-6xl', label: '6XL' },
-  { value: 'text-7xl', label: '7XL' },
-  { value: 'text-8xl', label: '8XL' },
+  { value: 'text-6xl', label: '6XL (60px)' },
+  { value: '4.0rem', label: '6.2XL (64px)' },
+  { value: '4.25rem', label: '6.5XL (68px)' },
+  { value: 'text-7xl', label: '7XL (72px)' },
+  { value: 'text-8xl', label: '8XL (96px)' },
   { value: 'text-9xl', label: '9XL' },
   { value: '10rem', label: '10rem' },
 ];
@@ -531,6 +533,98 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
                       ...formData,
                       titleStyle: {
                         ...(formData.titleStyle || {}),
+                        sizeDesktop: v
+                      }
+                    })}
+                  />
+                </div>
+              </div>
+
+              {/* Estilos del Nombre de la Marca (Client) */}
+              <div className="bg-[#F5EFEF]/50 border border-[#E8E3E1] rounded-2xl p-6 space-y-5">
+                <div className="flex items-center gap-3">
+                  <span className="w-1.5 h-6 bg-[#a52f18] rounded-full" />
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#000000]">Tamaños del Nombre de la Marca (Client)</h4>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                  <SizeInputWithPresets
+                    label="Tamaño Mobile"
+                    value={formData.clientStyle?.sizeMobile || 'text-sm'}
+                    onChange={(v) => setFormData({
+                      ...formData,
+                      clientStyle: {
+                        ...(formData.clientStyle || {}),
+                        sizeMobile: v
+                      }
+                    })}
+                  />
+
+                  <SizeInputWithPresets
+                    label="Tamaño Tablet"
+                    value={formData.clientStyle?.sizeTablet || 'text-sm'}
+                    onChange={(v) => setFormData({
+                      ...formData,
+                      clientStyle: {
+                        ...(formData.clientStyle || {}),
+                        sizeTablet: v
+                      }
+                    })}
+                  />
+
+                  <SizeInputWithPresets
+                    label="Tamaño Desktop"
+                    value={formData.clientStyle?.sizeDesktop || 'text-base'}
+                    onChange={(v) => setFormData({
+                      ...formData,
+                      clientStyle: {
+                        ...(formData.clientStyle || {}),
+                        sizeDesktop: v
+                      }
+                    })}
+                  />
+                </div>
+              </div>
+
+              {/* Estilos del Resumen (Summary) */}
+              <div className="bg-[#F5EFEF]/50 border border-[#E8E3E1] rounded-2xl p-6 space-y-5">
+                <div className="flex items-center gap-3">
+                  <span className="w-1.5 h-6 bg-[#a52f18] rounded-full" />
+                  <h4 className="text-xs font-bold uppercase tracking-wider text-[#000000]">Tamaños del Resumen del Proyecto (Summary)</h4>
+                </div>
+                
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-5">
+                  <SizeInputWithPresets
+                    label="Tamaño Mobile"
+                    value={formData.summaryStyle?.sizeMobile || 'text-[1.125rem]'}
+                    onChange={(v) => setFormData({
+                      ...formData,
+                      summaryStyle: {
+                        ...(formData.summaryStyle || {}),
+                        sizeMobile: v
+                      }
+                    })}
+                  />
+
+                  <SizeInputWithPresets
+                    label="Tamaño Tablet"
+                    value={formData.summaryStyle?.sizeTablet || 'text-[1.125rem]'}
+                    onChange={(v) => setFormData({
+                      ...formData,
+                      summaryStyle: {
+                        ...(formData.summaryStyle || {}),
+                        sizeTablet: v
+                      }
+                    })}
+                  />
+
+                  <SizeInputWithPresets
+                    label="Tamaño Desktop"
+                    value={formData.summaryStyle?.sizeDesktop || 'text-[1.125rem]'}
+                    onChange={(v) => setFormData({
+                      ...formData,
+                      summaryStyle: {
+                        ...(formData.summaryStyle || {}),
                         sizeDesktop: v
                       }
                     })}

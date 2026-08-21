@@ -610,23 +610,53 @@ export const ProjectPreview: React.FC<ProjectPreviewProps & { device?: 'desktop'
                 );
               })()}
 
-              {project.title && (
-                <p
-                  className="font-sans font-bold uppercase tracking-widest text-sm md:text-base text-black/70"
-                  style={{ letterSpacing: '0.15em' }}
-                >
-                  {project.client}
-                </p>
-              )}
+              {project.title && (() => {
+                const clientId = `client-preview-${Math.random().toString(36).substr(2, 9)}`;
+                const { className: clientSizeClass, style: clientSizeStyle, styleElement: clientStyleElement } = getResponsiveTextStyle(
+                  clientId,
+                  project.clientStyle?.sizeMobile || 'text-sm',
+                  project.clientStyle?.sizeTablet || 'text-sm',
+                  project.clientStyle?.sizeDesktop || 'text-base',
+                  device
+                );
+                return (
+                  <>
+                    {clientStyleElement}
+                    <p
+                      id={clientId}
+                      className={`font-sans font-bold uppercase tracking-widest text-black/70 ${clientSizeClass}`}
+                      style={{ letterSpacing: '0.15em', ...clientSizeStyle }}
+                    >
+                      {project.client}
+                    </p>
+                  </>
+                );
+              })()}
 
               <div style={{ width: '4rem', height: '1px', background: '#a52f18', marginTop: '0.25rem' }} />
 
-              <p
-                className="font-medium leading-[1.5] text-black/80"
-                style={{ fontSize: '1.125rem', maxWidth: '42rem' }}
-              >
-                {project.summary || ''}
-              </p>
+              {(() => {
+                const summaryId = `summary-preview-${Math.random().toString(36).substr(2, 9)}`;
+                const { className: summarySizeClass, style: summarySizeStyle, styleElement: summaryStyleElement } = getResponsiveTextStyle(
+                  summaryId,
+                  project.summaryStyle?.sizeMobile || 'text-[1.125rem]',
+                  project.summaryStyle?.sizeTablet || 'text-[1.125rem]',
+                  project.summaryStyle?.sizeDesktop || 'text-[1.125rem]',
+                  device
+                );
+                return (
+                  <>
+                    {summaryStyleElement}
+                    <p
+                      id={summaryId}
+                      className={`font-medium leading-[1.5] text-black/80 ${summarySizeClass}`}
+                      style={{ maxWidth: '42rem', ...summarySizeStyle }}
+                    >
+                      {project.summary || ''}
+                    </p>
+                  </>
+                );
+              })()}
             </div>
 
             {/* RIGHT — category, year, scope */}
