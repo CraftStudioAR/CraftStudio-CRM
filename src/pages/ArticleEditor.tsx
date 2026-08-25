@@ -340,18 +340,6 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
               />
             </div>
 
-            <div>
-              <label className="block text-xs font-medium text-[#666666] mb-1.5">Contenido Completo del Artículo (Soporta párrafos) *</label>
-              <textarea
-                rows={12}
-                required
-                value={formData.content}
-                onChange={(e) => setFormData({ ...formData, content: e.target.value })}
-                placeholder="Escribí aquí el cuerpo completo del ensayo..."
-                className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3.5 py-2.5 text-xs text-[#000000] outline-none font-serif text-base leading-relaxed resize-y"
-              />
-            </div>
-
             <div className="border-t border-[#E8E3E1] pt-6 space-y-4">
               <h4 className="text-sm font-semibold text-[#000000] flex items-center gap-2">
                 <Layers className="w-4 h-4 text-[#a52f18]" />
