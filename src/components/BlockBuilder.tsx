@@ -316,14 +316,14 @@ export const BlockBuilder: React.FC<BlockBuilderProps> = ({ blocks, onChange }) 
           blocks.map((block, idx) => (
             <div
               key={idx}
-              className={`rounded-2xl border transition-all duration-200 overflow-hidden ${
+              className={`rounded-2xl border transition-all duration-200 ${
                 activeEditingIndex === idx
                   ? 'bg-white border-[#a52f18] shadow-md'
                   : 'bg-white border-[#E8E3E1] hover:border-[#a52f18]/40'
               }`}
             >
               {/* Block header */}
-              <div className="flex items-center justify-between px-4 py-3 bg-[#FEFAF9] border-b border-[#E8E3E1]">
+              <div className="flex items-center justify-between px-4 py-3 bg-[#FEFAF9] border-b border-[#E8E3E1] rounded-t-2xl">
                 <div className="flex items-center gap-3">
                   <span className="font-mono text-xs text-[#aaa]">#{idx + 1}</span>
                   <BlockTypeBadge type={block.type} />
@@ -384,7 +384,7 @@ export const BlockBuilder: React.FC<BlockBuilderProps> = ({ blocks, onChange }) 
 
               {/* Editing form */}
               {activeEditingIndex === idx && (
-                <div className="p-5 bg-white space-y-5">
+                <div className="p-5 bg-white space-y-5 rounded-b-2xl">
                   <BlockEditorForm
                     block={block}
                     onChange={(updated) => handleUpdateBlock(idx, updated)}
