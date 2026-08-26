@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { WorkCase, ProjectBlock } from '../types';
 import { BlockBuilder } from '../components/BlockBuilder';
 import { ProjectPreview, CoverCardPreview } from '../components/ProjectPreview';
@@ -175,33 +176,57 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
   return (
     <div className="space-y-6 animate-fadeIn pb-16">
       
-      {/* Delicate & Elegant Centered Success Modal */}
-      {feedback && (
-        <div className="fixed inset-0 w-screen h-screen z-[999999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
+      {/* Delicate & Elegant Centered Success Modal via Portal */}
+      {feedback && createPortal(
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            width: '100vw',
+            maxWidth: '100%',
+            height: '100vh',
+            maxHeight: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.65)',
+            backdropFilter: 'blur(4px)',
+            WebkitBackdropFilter: 'blur(4px)',
+            zIndex: 9999999,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            padding: '1rem',
+            boxSizing: 'border-box'
+          }}
+          className="animate-fadeIn"
+          onClick={() => setFeedback(null)}
+        >
           <div
+            onClick={(e) => e.stopPropagation()}
             className={`rounded-2xl p-6 sm:p-7 max-w-xs sm:max-w-sm w-full shadow-2xl text-center space-y-4 border transition-all ${
               feedback.type === 'success'
-                ? 'bg-[#122b1c] border-emerald-600/40 text-emerald-50'
-                : 'bg-[#331414] border-red-600/40 text-red-50'
+                ? 'bg-[#122b1c] border-emerald-600/50 text-emerald-50'
+                : 'bg-[#331414] border-red-600/50 text-red-50'
             }`}
           >
-            <div className={`w-11 h-11 rounded-full flex items-center justify-center mx-auto border ${
+            <div className={`w-12 h-12 rounded-full flex items-center justify-center mx-auto border ${
               feedback.type === 'success'
-                ? 'bg-emerald-950/80 border-emerald-500/30 text-emerald-400'
-                : 'bg-red-950/80 border-red-500/30 text-red-400'
+                ? 'bg-emerald-950/80 border-emerald-500/40 text-emerald-400'
+                : 'bg-red-950/80 border-red-500/40 text-red-400'
             }`}>
               {feedback.type === 'success' ? (
-                <CheckCircle className="w-5 h-5" />
+                <CheckCircle className="w-6 h-6" />
               ) : (
-                <AlertCircle className="w-5 h-5" />
+                <AlertCircle className="w-6 h-6" />
               )}
             </div>
             
             <div className="space-y-1">
-              <h3 className="text-lg font-serif font-normal tracking-wide text-white">
+              <h3 className="text-xl font-serif font-normal tracking-wide text-white">
                 {feedback.type === 'success' ? '¡Cambios Guardados!' : 'Atención'}
               </h3>
-              <p className="text-xs text-emerald-200/80 font-sans leading-relaxed">
+              <p className="text-xs text-emerald-200/90 font-sans leading-relaxed">
                 {feedback.message}
               </p>
             </div>
@@ -211,10 +236,11 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
               onClick={() => setFeedback(null)}
               className="w-full py-2.5 bg-[#FEFAF9] text-[#122b1c] hover:bg-white rounded-xl text-xs font-semibold shadow-sm transition-all active:scale-95 cursor-pointer"
             >
-              Continuar Editando
+              Aceptar / Continuar Editando
             </button>
           </div>
-        </div>
+        </div>,
+        document.body
       )}
 
       {/* Sticky Header Bar */}
