@@ -74,7 +74,21 @@ export type ProjectBlock =
       items: Stat[];
       highlight?: Stat;
     }
-  | { type: "testimonial"; quote: string; author: string; role: string }
+  | {
+      type: "testimonial";
+      quote: string;
+      author: string;
+      role: string;
+      fontFamily?: 'serif' | 'sans';
+      bold?: boolean;
+      italic?: boolean;
+      sizeMobile?: string;
+      sizeTablet?: string;
+      sizeDesktop?: string;
+      tracking?: string;
+      leading?: string;
+      textAlign?: 'left' | 'center' | 'right';
+    }
   | {
       type: "text";
       text: string;

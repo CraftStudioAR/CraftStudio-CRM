@@ -1341,6 +1341,109 @@ const BlockEditorForm: React.FC<{
               placeholder="CEO / Empresa"
             />
           </div>
+
+          <SectionDivider label="Formato y Estilo de Texto" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-[#F5EFEF]/40 border border-[#E8E3E1] rounded-2xl p-4">
+            <div className="flex flex-col gap-3">
+              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Formato de Texto</label>
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#666666]">
+                  <input
+                    type="checkbox"
+                    checked={block.bold || false}
+                    onChange={(e) => onChange({ ...block, bold: e.target.checked })}
+                    className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                  />
+                  Negrita (Bold)
+                </label>
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#666666]">
+                  <input
+                    type="checkbox"
+                    checked={block.italic !== false}
+                    onChange={(e) => onChange({ ...block, italic: e.target.checked })}
+                    className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                  />
+                  Itálica (Italic)
+                </label>
+              </div>
+            </div>
+
+            <div className="flex flex-col gap-3">
+              <label className="text-[11px] font-medium text-[#888] uppercase tracking-wide">Familia de Fuente</label>
+              <div className="flex flex-wrap gap-x-4 gap-y-2">
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#666666]">
+                  <input
+                    type="checkbox"
+                    checked={block.fontFamily === 'sans'}
+                    onChange={(e) => onChange({ ...block, fontFamily: e.target.checked ? 'sans' : 'serif' })}
+                    className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                  />
+                  Fuente Sans (p. ej. Instrument Sans)
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <ToggleGroup
+              label="Alineación"
+              value={block.textAlign || 'left'}
+              options={[
+                { value: 'left', label: 'Izquierda', icon: <AlignLeft className="w-3 h-3" /> },
+                { value: 'center', label: 'Centro', icon: <AlignCenter className="w-3 h-3" /> },
+                { value: 'right', label: 'Derecha', icon: <AlignRight className="w-3 h-3" /> },
+              ]}
+              onChange={(v) => onChange({ ...block, textAlign: v as any })}
+            />
+
+            <CustomSelect
+              label="Interletrado (Tracking)"
+              value={block.tracking || 'tracking-normal'}
+              options={[
+                { value: 'tracking-tighter', label: 'Muy Ajustado' },
+                { value: 'tracking-tight', label: 'Ajustado' },
+                { value: 'tracking-normal', label: 'Normal' },
+                { value: 'tracking-wide', label: 'Ancho' },
+                { value: 'tracking-wider', label: 'Más Ancho' },
+                { value: 'tracking-widest', label: 'Expandido' },
+              ]}
+              onChange={(v) => onChange({ ...block, tracking: v })}
+            />
+
+            <CustomSelect
+              label="Interlineado (Leading)"
+              value={block.leading || 'leading-[1.25]'}
+              options={[
+                { value: 'leading-none', label: 'Ninguno (1.0)' },
+                { value: 'leading-tight', label: 'Ajustado (1.25)' },
+                { value: 'leading-snug', label: 'Cómodo (1.375)' },
+                { value: 'leading-normal', label: 'Normal (1.5)' },
+                { value: 'leading-relaxed', label: 'Relajado (1.625)' },
+                { value: 'leading-loose', label: 'Suelto (2.0)' },
+              ]}
+              onChange={(v) => onChange({ ...block, leading: v })}
+            />
+          </div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 border-t border-[#E8E3E1] pt-4">
+            <SizeInputWithPresets
+              label="Tamaño Mobile"
+              value={block.sizeMobile || 'text-2xl'}
+              onChange={(v) => onChange({ ...block, sizeMobile: v })}
+            />
+
+            <SizeInputWithPresets
+              label="Tamaño Tablet"
+              value={block.sizeTablet || 'text-3xl'}
+              onChange={(v) => onChange({ ...block, sizeTablet: v })}
+            />
+
+            <SizeInputWithPresets
+              label="Tamaño Desktop"
+              value={block.sizeDesktop || 'text-4xl'}
+              onChange={(v) => onChange({ ...block, sizeDesktop: v })}
+            />
+          </div>
         </div>
       );
 
