@@ -145,24 +145,8 @@ function timeoutPromise<T>(promise: PromiseLike<T>, ms: number): Promise<T> {
 }
 
 export async function saveProject(project: WorkCase): Promise<{ success: boolean; error?: string }> {
-  // Always update LocalStorage FIRST immediately so changes are saved 100% instantly
-  try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_PROJECTS_KEY);
-    const projects: WorkCase[] = raw ? JSON.parse(raw) : INITIAL_PROJECTS;
-    const index = projects.findIndex((p) => p.slug === project.slug);
+  let supabaseError: string | undefined = undefined;
 
-    if (index >= 0) {
-      projects[index] = { ...project, updated_at: new Date().toISOString() };
-    } else {
-      projects.unshift({ ...project, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
-    }
-
-    localStorage.setItem(LOCAL_STORAGE_PROJECTS_KEY, JSON.stringify(projects));
-  } catch (err) {
-    console.warn('LocalStorage save error:', err);
-  }
-
-  // Attempt Supabase sync asynchronously with a 2.5s maximum timeout
   if (isSupabaseConfigured && supabase) {
     try {
       const payload = {
@@ -184,13 +168,40 @@ export async function saveProject(project: WorkCase): Promise<{ success: boolean
         updated_at: new Date().toISOString(),
       };
 
-      await timeoutPromise(
+      const res: any = await timeoutPromise(
         supabase.from('projects').upsert(payload, { onConflict: 'slug' }),
-        2500
+        5000
       );
+
+      if (res && res.error) {
+        console.error('Supabase save error:', res.error);
+        supabaseError = res.error.message || String(res.error);
+      }
     } catch (err: any) {
-      console.warn('Supabase save timed out or failed:', err);
+      console.warn('Supabase save exception:', err);
+      supabaseError = err?.message || String(err);
     }
+  }
+
+  // Always update LocalStorage as well
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_PROJECTS_KEY);
+    const projects: WorkCase[] = raw ? JSON.parse(raw) : INITIAL_PROJECTS;
+    const index = projects.findIndex((p) => p.slug === project.slug);
+
+    if (index >= 0) {
+      projects[index] = { ...project, updated_at: new Date().toISOString() };
+    } else {
+      projects.unshift({ ...project, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
+    }
+
+    localStorage.setItem(LOCAL_STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+  } catch (err) {
+    console.warn('LocalStorage save error:', err);
+  }
+
+  if (supabaseError) {
+    return { success: false, error: `Error al guardar en Supabase: ${supabaseError}` };
   }
 
   return { success: true };
@@ -320,27 +331,7 @@ export async function fetchArticles(): Promise<CraftLabArticle[]> {
 }
 
 export async function saveArticle(article: CraftLabArticle): Promise<{ success: boolean; error?: string }> {
-  // Always update LocalStorage FIRST immediately
-  try {
-    const raw = localStorage.getItem(LOCAL_STORAGE_ARTICLES_KEY);
-    const articles: CraftLabArticle[] = raw ? JSON.parse(raw) : INITIAL_ARTICLES;
-    const index = articles.findIndex((a) => a.slug === article.slug || a.id === article.id);
-
-    if (index >= 0) {
-      articles[index] = { ...article, updated_at: new Date().toISOString() };
-    } else {
-      articles.unshift({
-        ...article,
-        id: article.id || Date.now().toString(),
-        created_at: new Date().toISOString(),
-        updated_at: new Date().toISOString(),
-      });
-    }
-
-    localStorage.setItem(LOCAL_STORAGE_ARTICLES_KEY, JSON.stringify(articles));
-  } catch (err) {
-    console.warn('LocalStorage save article error:', err);
-  }
+  let supabaseError: string | undefined = undefined;
 
   if (isSupabaseConfigured && supabase) {
     try {
@@ -363,13 +354,45 @@ export async function saveArticle(article: CraftLabArticle): Promise<{ success: 
         updated_at: new Date().toISOString(),
       };
 
-      await timeoutPromise(
+      const res: any = await timeoutPromise(
         supabase.from('craft_lab_articles').upsert(payload, { onConflict: 'slug' }),
-        2500
+        5000
       );
+
+      if (res && res.error) {
+        console.error('Supabase save article error:', res.error);
+        supabaseError = res.error.message || String(res.error);
+      }
     } catch (err: any) {
-      console.warn('Supabase save article timed out or failed:', err);
+      console.warn('Supabase save article exception:', err);
+      supabaseError = err?.message || String(err);
     }
+  }
+
+  // Always update LocalStorage as well
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_ARTICLES_KEY);
+    const articles: CraftLabArticle[] = raw ? JSON.parse(raw) : INITIAL_ARTICLES;
+    const index = articles.findIndex((a) => a.slug === article.slug || a.id === article.id);
+
+    if (index >= 0) {
+      articles[index] = { ...article, updated_at: new Date().toISOString() };
+    } else {
+      articles.unshift({
+        ...article,
+        id: article.id || Date.now().toString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    }
+
+    localStorage.setItem(LOCAL_STORAGE_ARTICLES_KEY, JSON.stringify(articles));
+  } catch (err) {
+    console.warn('LocalStorage save article error:', err);
+  }
+
+  if (supabaseError) {
+    return { success: false, error: `Error al guardar artículo en Supabase: ${supabaseError}` };
   }
 
   return { success: true };
