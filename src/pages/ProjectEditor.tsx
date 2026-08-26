@@ -163,8 +163,7 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
       setFeedback({ type: 'success', message: '¡Proyecto guardado exitosamente!' });
       setTimeout(() => {
         setFeedback(null);
-        onBack();
-      }, 1000);
+      }, 4000);
     } else {
       setFeedback({ type: 'error', message: res.error || 'Error al guardar el proyecto' });
     }
@@ -173,7 +172,29 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
   return (
     <div className="space-y-6 animate-fadeIn pb-16">
       
-      {/* Editor Header Bar */}
+      {/* Floating Feedback Toast Popup */}
+      {feedback && (
+        <div
+          className={`fixed bottom-8 right-8 z-50 p-4 px-6 rounded-2xl border shadow-2xl flex items-center gap-3 text-sm font-semibold transition-all ${
+            feedback.type === 'success'
+              ? 'bg-[#0f2e1b] text-emerald-100 border-emerald-600/40 shadow-emerald-950/30'
+              : 'bg-[#381111] text-red-100 border-red-600/40 shadow-red-950/30'
+          }`}
+        >
+          {feedback.type === 'success' ? (
+            <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
+          ) : (
+            <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
+          )}
+          <span>{feedback.message}</span>
+          <button 
+            onClick={() => setFeedback(null)} 
+            className="ml-2 opacity-60 hover:opacity-100 text-xs text-white"
+          >
+            ✕
+          </button>
+        </div>
+      )}
       <div className="sticky top-[106px] md:top-[65px] z-40 bg-[#FEFAF9]/95 backdrop-blur-md py-4 border-b border-[#E8E3E1] flex flex-col sm:flex-row sm:items-center justify-between gap-4 -mx-4 px-4 md:-mx-8 md:px-8">
         <div className="flex items-center gap-3">
           <button
@@ -224,19 +245,7 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
         </div>
       </div>
 
-      {/* Feedback Toast */}
-      {feedback && (
-        <div
-          className={`p-4 rounded-xl border text-xs font-medium flex items-center gap-3 animate-fadeIn ${
-            feedback.type === 'success'
-              ? 'bg-emerald-50 border-emerald-200 text-emerald-800'
-              : 'bg-red-50 border-red-200 text-red-800'
-          }`}
-        >
-          {feedback.type === 'success' ? <CheckCircle className="w-4 h-4 text-emerald-600" /> : <AlertCircle className="w-4 h-4 text-red-600" />}
-          <span>{feedback.message}</span>
-        </div>
-      )}
+
 
       {/* Live Preview Pane */}
       {activeTab === 'preview' ? (
