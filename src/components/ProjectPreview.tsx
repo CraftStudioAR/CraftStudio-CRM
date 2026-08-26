@@ -605,7 +605,7 @@ export const ProjectPreview: React.FC<ProjectPreviewProps & { device?: 'desktop'
     if (blocks.length === 0) {
       return null;
     }
-    const blocksGap = device === 'mobile' ? 'gap-6' : 'gap-10';
+    const blocksGap = device === 'mobile' ? 'gap-5' : 'gap-6';
     return (
       <div className={`flex flex-col ${blocksGap}`} style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {blocks.map((block, i) => (
