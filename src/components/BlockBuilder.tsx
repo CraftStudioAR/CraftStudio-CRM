@@ -323,14 +323,14 @@ export const BlockBuilder: React.FC<BlockBuilderProps> = ({ blocks, onChange }) 
               }`}
             >
               {/* Block header */}
-              <div className="flex items-center justify-between px-4 py-3 bg-[#FEFAF9] border-b border-[#E8E3E1] rounded-t-2xl">
-                <div className="flex items-center gap-3">
-                  <span className="font-mono text-xs text-[#aaa]">#{idx + 1}</span>
+              <div className="flex items-center justify-between px-4 py-3 bg-[#FEFAF9] border-b border-[#E8E3E1] rounded-t-2xl min-w-0 overflow-hidden gap-2">
+                <div className="flex items-center gap-3 min-w-0 overflow-hidden">
+                  <span className="font-mono text-xs text-[#aaa] shrink-0">#{idx + 1}</span>
                   <BlockTypeBadge type={block.type} />
                   <BlockLayoutSummary block={block} />
                 </div>
 
-                <div className="flex items-center gap-1">
+                <div className="flex items-center gap-1 shrink-0">
                   <button
                     type="button"
                     onClick={() => handleMoveUp(idx)}
@@ -377,7 +377,7 @@ export const BlockBuilder: React.FC<BlockBuilderProps> = ({ blocks, onChange }) 
 
               {/* Collapsed preview */}
               {activeEditingIndex !== idx && (
-                <div className="px-4 py-3 flex items-center gap-4 text-xs text-[#666666]">
+                <div className="px-4 py-3 flex items-center gap-4 text-xs text-[#666666] min-w-0 overflow-hidden">
                   <BlockSummaryPreview block={block} />
                 </div>
               )}
@@ -545,10 +545,10 @@ const BlockSummaryPreview: React.FC<{ block: ProjectBlock }> = ({ block }) => {
       );
     case 'imageText':
       return (
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0 overflow-hidden">
           {imgThumb(block.image.publicId, block.image.alt)}
-          <div className="truncate">
-            <p className="text-[#000000] text-xs font-medium">
+          <div className="min-w-0 flex-1 overflow-hidden">
+            <p className="text-[#000000] text-xs font-medium shrink-0">
               Img {block.imagePosition === 'right' ? '→' : '←'} · {block.layout || '50/50'}
             </p>
             <p className="text-[#666666] text-[11px] truncate italic">"{block.text}"</p>
