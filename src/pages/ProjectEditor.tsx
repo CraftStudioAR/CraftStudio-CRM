@@ -172,29 +172,36 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
   return (
     <div className="space-y-6 animate-fadeIn pb-16">
       
-      {/* Floating Feedback Toast Popup */}
+      {/* High Visibility Top-Centered Floating Green Success Popup */}
       {feedback && (
-        <div
-          className={`fixed bottom-8 right-8 z-50 p-4 px-6 rounded-2xl border shadow-2xl flex items-center gap-3 text-sm font-semibold transition-all ${
-            feedback.type === 'success'
-              ? 'bg-[#0f2e1b] text-emerald-100 border-emerald-600/40 shadow-emerald-950/30'
-              : 'bg-[#381111] text-red-100 border-red-600/40 shadow-red-950/30'
-          }`}
-        >
-          {feedback.type === 'success' ? (
-            <CheckCircle className="w-5 h-5 text-emerald-400 shrink-0" />
-          ) : (
-            <AlertCircle className="w-5 h-5 text-red-400 shrink-0" />
-          )}
-          <span>{feedback.message}</span>
-          <button 
-            onClick={() => setFeedback(null)} 
-            className="ml-2 opacity-60 hover:opacity-100 text-xs text-white"
+        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] max-w-lg w-[92%] sm:w-auto">
+          <div
+            className={`p-4 px-6 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.35)] flex items-center justify-between gap-4 text-sm md:text-base font-bold border-2 transition-all ${
+              feedback.type === 'success'
+                ? 'bg-emerald-600 text-white border-emerald-300 shadow-emerald-950/40'
+                : 'bg-red-600 text-white border-red-300 shadow-red-950/40'
+            }`}
           >
-            ✕
-          </button>
+            <div className="flex items-center gap-3">
+              {feedback.type === 'success' ? (
+                <CheckCircle className="w-6 h-6 text-white shrink-0" />
+              ) : (
+                <AlertCircle className="w-6 h-6 text-white shrink-0" />
+              )}
+              <span>{feedback.message}</span>
+            </div>
+            <button 
+              onClick={() => setFeedback(null)} 
+              className="p-1 hover:bg-white/20 rounded-lg text-white font-bold text-base transition-colors"
+              title="Cerrar"
+            >
+              ✕
+            </button>
+          </div>
         </div>
       )}
+
+      {/* Sticky Header Bar */}
       <div className="sticky top-[106px] md:top-[65px] z-40 bg-[#FEFAF9]/95 backdrop-blur-md py-4 border-b border-[#E8E3E1] flex flex-col sm:flex-row sm:items-center justify-between gap-4 -mx-4 px-4 md:-mx-8 md:px-8">
         <div className="flex items-center gap-3">
           <button
