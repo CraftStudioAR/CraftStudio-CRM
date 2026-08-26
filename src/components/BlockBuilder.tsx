@@ -209,6 +209,16 @@ export const BlockBuilder: React.FC<BlockBuilderProps> = ({ blocks, onChange }) 
           type: 'text',
           text: '',
           align: 'left',
+          hasContainer: true,
+          fontFamily: 'sans',
+          bold: false,
+          italic: false,
+          widthMode: 'standard',
+          tracking: 'tracking-normal',
+          leading: 'leading-relaxed',
+          sizeMobile: 'text-sm',
+          sizeTablet: 'text-base',
+          sizeDesktop: 'text-base',
         };
         break;
       case 'image':
