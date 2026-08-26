@@ -154,31 +154,31 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <div
                 key={project.slug}
                 onClick={() => onSelectProject(project)}
-                className="group flex items-center justify-between p-3.5 rounded-xl bg-[#FEFAF9] border border-[#E8E3E1] hover:border-[#a52f18]/60 cursor-pointer transition-all hover:shadow-sm"
+                className="group flex items-center justify-between p-3.5 rounded-xl bg-[#FEFAF9] border border-[#E8E3E1] hover:border-[#a52f18]/60 cursor-pointer transition-all hover:shadow-sm gap-2 min-w-0 overflow-hidden"
               >
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-3 min-w-0 overflow-hidden flex-1">
                   <img
                     src={getImageUrl(project.cover?.publicId)}
                     alt={project.client}
-                    className="w-12 h-12 rounded-lg object-cover bg-white border border-[#E8E3E1] group-hover:scale-105 transition-transform"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover bg-white border border-[#E8E3E1] group-hover:scale-105 transition-transform shrink-0"
                   />
-                  <div>
-                    <h4 className="text-sm font-serif text-[#000000] font-medium group-hover:text-[#a52f18] transition-colors">
+                  <div className="min-w-0 flex-1 overflow-hidden">
+                    <h4 className="text-sm font-serif text-[#000000] font-medium group-hover:text-[#a52f18] transition-colors truncate">
                       {project.client}
                     </h4>
-                    <div className="flex items-center gap-2 text-xs text-[#666666] mt-0.5">
-                      <span>{project.category}</span>
-                      <span>•</span>
-                      <span>{project.year}</span>
+                    <div className="flex items-center gap-1.5 text-xs text-[#666666] mt-0.5 min-w-0 overflow-hidden">
+                      <span className="truncate max-w-[90px] sm:max-w-none">{project.category}</span>
+                      <span className="shrink-0">•</span>
+                      <span className="shrink-0">{project.year}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <span className="text-[11px] font-mono text-[#666666] bg-white px-2 py-1 rounded border border-[#E8E3E1]">
+                <div className="flex items-center gap-1.5 shrink-0">
+                  <span className="text-[10px] sm:text-[11px] font-mono text-[#666666] bg-white px-1.5 py-0.5 sm:px-2 sm:py-1 rounded border border-[#E8E3E1] whitespace-nowrap">
                     {project.blocks?.length || 0} bloques
                   </span>
-                  <ArrowUpRight className="w-4 h-4 text-[#666666] group-hover:text-[#a52f18] transition-colors" />
+                  <ArrowUpRight className="w-4 h-4 text-[#666666] group-hover:text-[#a52f18] transition-colors shrink-0" />
                 </div>
               </div>
             ))}
@@ -205,27 +205,27 @@ export const Dashboard: React.FC<DashboardProps> = ({
               <div
                 key={article.id || article.slug}
                 onClick={() => onSelectArticle(article)}
-                className="group flex items-center justify-between p-3.5 rounded-xl bg-[#FEFAF9] border border-[#E8E3E1] hover:border-[#a52f18]/60 cursor-pointer transition-all hover:shadow-sm"
+                className="group flex items-center justify-between p-3.5 rounded-xl bg-[#FEFAF9] border border-[#E8E3E1] hover:border-[#a52f18]/60 cursor-pointer transition-all hover:shadow-sm gap-2 min-w-0 overflow-hidden"
               >
-                <div className="flex items-center gap-3.5">
+                <div className="flex items-center gap-3 min-w-0 overflow-hidden flex-1">
                   <img
                     src={getImageUrl(article.image)}
                     alt={article.title}
-                    className="w-12 h-12 rounded-lg object-cover bg-white border border-[#E8E3E1] group-hover:scale-105 transition-transform"
+                    className="w-11 h-11 sm:w-12 sm:h-12 rounded-lg object-cover bg-white border border-[#E8E3E1] group-hover:scale-105 transition-transform shrink-0"
                   />
-                  <div>
-                    <h4 className="text-sm font-serif text-[#000000] font-medium group-hover:text-[#a52f18] transition-colors">
+                  <div className="min-w-0 flex-1 overflow-hidden">
+                    <h4 className="text-sm font-serif text-[#000000] font-medium group-hover:text-[#a52f18] transition-colors truncate">
                       {article.title}
                     </h4>
-                    <div className="flex items-center gap-2 text-xs text-[#666666] mt-0.5">
-                      <span className="text-[#a52f18] font-medium">{article.category}</span>
-                      <span>•</span>
-                      <span>{article.date}</span>
+                    <div className="flex items-center gap-1.5 text-xs text-[#666666] mt-0.5 min-w-0 overflow-hidden">
+                      <span className="text-[#a52f18] font-medium truncate max-w-[100px] sm:max-w-none">{article.category}</span>
+                      <span className="shrink-0">•</span>
+                      <span className="shrink-0">{article.date}</span>
                     </div>
                   </div>
                 </div>
 
-                <ArrowUpRight className="w-4 h-4 text-[#666666] group-hover:text-[#a52f18] transition-colors" />
+                <ArrowUpRight className="w-4 h-4 text-[#666666] group-hover:text-[#a52f18] transition-colors shrink-0" />
               </div>
             ))}
           </div>
