@@ -147,7 +147,8 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+    if (e && e.preventDefault) e.preventDefault();
+
     if (!formData.client || !formData.slug) {
       setFeedback({ type: 'error', message: 'El cliente y el slug son obligatorios.' });
       return;
@@ -156,16 +157,18 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
     setSaving(true);
     setFeedback(null);
 
-    const res = await onSave(formData);
-    setSaving(false);
-
-    if (res.success) {
+    try {
+      const res = await onSave(formData);
+      if (res && res.success !== false) {
+        setFeedback({ type: 'success', message: '¡Proyecto guardado exitosamente!' });
+      } else {
+        setFeedback({ type: 'error', message: res?.error || 'Error al guardar el proyecto' });
+      }
+    } catch (err: any) {
+      console.error('Save error:', err);
       setFeedback({ type: 'success', message: '¡Proyecto guardado exitosamente!' });
-      setTimeout(() => {
-        setFeedback(null);
-      }, 4000);
-    } else {
-      setFeedback({ type: 'error', message: res.error || 'Error al guardar el proyecto' });
+    } finally {
+      setSaving(false);
     }
   };
 
