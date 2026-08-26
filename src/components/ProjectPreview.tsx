@@ -238,19 +238,63 @@ function StatsPanel({
 // ─────────────────────────────────────────────
 // Testimonial — idéntico al del frontend
 // ─────────────────────────────────────────────
-function Testimonial({ quote, author, role }: { quote: string; author: string; role: string }) {
+function Testimonial({
+  quote,
+  author,
+  role,
+  fontFamily = 'serif',
+  bold = false,
+  italic = true,
+  sizeMobile = 'text-2xl',
+  sizeTablet = 'text-3xl',
+  sizeDesktop = 'text-4xl',
+  tracking = 'tracking-normal',
+  leading = 'leading-[1.25]',
+  textAlign = 'left',
+}: {
+  quote: string;
+  author: string;
+  role: string;
+  fontFamily?: 'serif' | 'sans';
+  bold?: boolean;
+  italic?: boolean;
+  sizeMobile?: string;
+  sizeTablet?: string;
+  sizeDesktop?: string;
+  tracking?: string;
+  leading?: string;
+  textAlign?: 'left' | 'center' | 'right';
+}) {
+  const elementId = `testimonial-prev-${Math.random().toString(36).substr(2, 9)}`;
+  const { className: resolvedSizeClass, style: sizeStyle, styleElement } = getResponsiveTextStyle(
+    elementId,
+    sizeMobile,
+    sizeTablet,
+    sizeDesktop
+  );
+
+  const boldClass = bold ? "font-bold" : "font-normal";
+  const italicClass = italic ? "italic" : "not-italic";
+  const trackingClass = tracking || "tracking-normal";
+  const leadingClass = leading || "leading-[1.25]";
+  const fontFamilyClass = fontFamily === "sans" ? "font-sans" : "font-serif";
+
+  const alignJustifyClass = textAlign === 'center' ? 'justify-center text-center' : textAlign === 'right' ? 'justify-end text-right' : 'justify-start text-left';
+
   return (
     <figure
-      className="relative overflow-hidden rounded-2xl px-8 py-12 md:px-16 md:py-20"
+      className="relative overflow-hidden rounded-2xl px-12 py-12 sm:px-16 md:px-24 md:py-20 lg:px-32"
       style={{ border: '1px solid rgba(0,0,0,0.10)', background: 'rgba(0,0,0,0.02)' }}
     >
+      {styleElement}
       <blockquote
-        className="font-serif italic"
-        style={{ fontSize: '1.75rem', lineHeight: 1.25, color: '#0a0424' }}
+        id={elementId}
+        className={`relative ${fontFamilyClass} ${boldClass} ${italicClass} text-${textAlign} text-balance text-[#0a0424] ${trackingClass} ${leadingClass} ${resolvedSizeClass}`}
+        style={sizeStyle}
       >
         {quote}
       </blockquote>
-      <figcaption className="mt-8 flex items-center gap-4">
+      <figcaption className={`relative mt-8 flex items-center gap-4 ${alignJustifyClass}`}>
         <span style={{ height: '1px', width: '2.5rem', background: '#a52f18', display: 'inline-block' }} />
         <span
           className="text-xs font-bold uppercase"
@@ -423,7 +467,22 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
       return <StatsPanel title={block.title} items={block.items} highlight={block.highlight} />;
 
     case 'testimonial':
-      return <Testimonial quote={block.quote} author={block.author} role={block.role} />;
+      return (
+        <Testimonial
+          quote={block.quote}
+          author={block.author}
+          role={block.role}
+          fontFamily={block.fontFamily}
+          bold={block.bold}
+          italic={block.italic}
+          sizeMobile={block.sizeMobile}
+          sizeTablet={block.sizeTablet}
+          sizeDesktop={block.sizeDesktop}
+          tracking={block.tracking}
+          leading={block.leading}
+          textAlign={block.textAlign}
+        />
+      );
 
     case 'text': {
       const isFullWidth = block.hasContainer || block.widthMode === 'full';
