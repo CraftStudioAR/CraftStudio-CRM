@@ -153,43 +153,71 @@ export async function saveProject(project: WorkCase): Promise<{ success: boolean
         .from('projects')
         .upsert(payload, { onConflict: 'slug' });
 
-      if (error) {
-        console.error('Supabase save error:', error);
-        return { success: false, error: error.message };
+      if (!error) {
+        try {
+          const raw = localStorage.getItem(LOCAL_STORAGE_PROJECTS_KEY);
+          const projects: WorkCase[] = raw ? JSON.parse(raw) : [];
+          const idx = projects.findIndex((p) => p.slug === project.slug);
+          if (idx >= 0) projects[idx] = project;
+          else projects.unshift(project);
+          localStorage.setItem(LOCAL_STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+        } catch (e) {}
+
+        return { success: true };
       }
+      console.warn('Supabase save error, falling back to LocalStorage:', error);
     } catch (err: any) {
-      return { success: false, error: err?.message || 'Error de conexión con Supabase' };
+      console.warn('Supabase save exception, falling back to LocalStorage:', err);
     }
   }
 
   // Fallback to LocalStorage update
-  const projects = await fetchProjects();
-  const index = projects.findIndex((p) => p.slug === project.slug);
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_PROJECTS_KEY);
+    const projects: WorkCase[] = raw ? JSON.parse(raw) : INITIAL_PROJECTS;
+    const index = projects.findIndex((p) => p.slug === project.slug);
 
-  if (index >= 0) {
-    projects[index] = { ...project, updated_at: new Date().toISOString() };
-  } else {
-    projects.unshift({ ...project, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
+    if (index >= 0) {
+      projects[index] = { ...project, updated_at: new Date().toISOString() };
+    } else {
+      projects.unshift({ ...project, created_at: new Date().toISOString(), updated_at: new Date().toISOString() });
+    }
+
+    localStorage.setItem(LOCAL_STORAGE_PROJECTS_KEY, JSON.stringify(projects));
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Error al guardar el proyecto' };
   }
-
-  localStorage.setItem(LOCAL_STORAGE_PROJECTS_KEY, JSON.stringify(projects));
-  return { success: true };
 }
 
 export async function deleteProject(slug: string): Promise<{ success: boolean; error?: string }> {
   if (isSupabaseConfigured && supabase) {
     try {
       const { error } = await supabase.from('projects').delete().eq('slug', slug);
-      if (error) return { success: false, error: error.message };
+      if (!error) {
+        try {
+          const raw = localStorage.getItem(LOCAL_STORAGE_PROJECTS_KEY);
+          const projects: WorkCase[] = raw ? JSON.parse(raw) : [];
+          const filtered = projects.filter((p) => p.slug !== slug);
+          localStorage.setItem(LOCAL_STORAGE_PROJECTS_KEY, JSON.stringify(filtered));
+        } catch (e) {}
+        return { success: true };
+      }
+      console.warn('Supabase delete error, falling back to LocalStorage:', error);
     } catch (err: any) {
-      return { success: false, error: err?.message || 'Error de conexión' };
+      console.warn('Supabase delete exception, falling back to LocalStorage:', err);
     }
   }
 
-  const projects = await fetchProjects();
-  const filtered = projects.filter((p) => p.slug !== slug);
-  localStorage.setItem(LOCAL_STORAGE_PROJECTS_KEY, JSON.stringify(filtered));
-  return { success: true };
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_PROJECTS_KEY);
+    const projects: WorkCase[] = raw ? JSON.parse(raw) : INITIAL_PROJECTS;
+    const filtered = projects.filter((p) => p.slug !== slug);
+    localStorage.setItem(LOCAL_STORAGE_PROJECTS_KEY, JSON.stringify(filtered));
+    return { success: true };
+  } catch (e: any) {
+    return { success: false, error: e?.message || 'Error al eliminar' };
+  }
 }
 
 // ==========================================
@@ -289,7 +317,6 @@ export async function saveArticle(article: CraftLabArticle): Promise<{ success: 
   if (isSupabaseConfigured && supabase) {
     try {
       let articleId = article.id;
-      // Validar si es un UUID válido. Si no lo es (ej: un timestamp local), generamos un nuevo UUID
       if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(articleId)) {
         articleId = crypto.randomUUID();
       }
@@ -312,28 +339,45 @@ export async function saveArticle(article: CraftLabArticle): Promise<{ success: 
         .from('craft_lab_articles')
         .upsert(payload, { onConflict: 'slug' });
 
-      if (error) return { success: false, error: error.message };
+      if (!error) {
+        try {
+          const raw = localStorage.getItem(LOCAL_STORAGE_ARTICLES_KEY);
+          const articles: CraftLabArticle[] = raw ? JSON.parse(raw) : [];
+          const idx = articles.findIndex((a) => a.slug === article.slug || a.id === article.id);
+          if (idx >= 0) articles[idx] = article;
+          else articles.unshift(article);
+          localStorage.setItem(LOCAL_STORAGE_ARTICLES_KEY, JSON.stringify(articles));
+        } catch (e) {}
+
+        return { success: true };
+      }
+      console.warn('Supabase save article error, falling back to LocalStorage:', error);
     } catch (err: any) {
-      return { success: false, error: err?.message || 'Error' };
+      console.warn('Supabase save article exception, falling back to LocalStorage:', err);
     }
   }
 
-  const articles = await fetchArticles();
-  const index = articles.findIndex((a) => a.slug === article.slug || a.id === article.id);
+  try {
+    const raw = localStorage.getItem(LOCAL_STORAGE_ARTICLES_KEY);
+    const articles: CraftLabArticle[] = raw ? JSON.parse(raw) : INITIAL_ARTICLES;
+    const index = articles.findIndex((a) => a.slug === article.slug || a.id === article.id);
 
-  if (index >= 0) {
-    articles[index] = { ...article, updated_at: new Date().toISOString() };
-  } else {
-    articles.unshift({
-      ...article,
-      id: article.id || Date.now().toString(),
-      created_at: new Date().toISOString(),
-      updated_at: new Date().toISOString(),
-    });
+    if (index >= 0) {
+      articles[index] = { ...article, updated_at: new Date().toISOString() };
+    } else {
+      articles.unshift({
+        ...article,
+        id: article.id || Date.now().toString(),
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      });
+    }
+
+    localStorage.setItem(LOCAL_STORAGE_ARTICLES_KEY, JSON.stringify(articles));
+    return { success: true };
+  } catch (err: any) {
+    return { success: false, error: err?.message || 'Error al guardar el artículo' };
   }
-
-  localStorage.setItem(LOCAL_STORAGE_ARTICLES_KEY, JSON.stringify(articles));
-  return { success: true };
 }
 
 export async function deleteArticle(slugOrId: string): Promise<{ success: boolean; error?: string }> {
