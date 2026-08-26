@@ -83,34 +83,43 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
   return (
     <div className="space-y-6 animate-fadeIn pb-16">
-      
-      {/* Centered Green Success Modal Popup */}
+        {/* Delicate & Elegant Centered Success Modal */}
       {feedback && (
-        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
+        <div className="fixed inset-0 w-screen h-screen z-[999999] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-fadeIn">
           <div
-            className={`rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-[0_20px_60px_rgba(0,0,0,0.5)] text-center space-y-4 border-2 animate-fadeIn ${
+            className={`rounded-2xl p-6 sm:p-7 max-w-xs sm:max-w-sm w-full shadow-2xl text-center space-y-4 border transition-all ${
               feedback.type === 'success'
-                ? 'bg-emerald-600 border-emerald-300 text-white'
-                : 'bg-red-600 border-red-300 text-white'
+                ? 'bg-[#122b1c] border-emerald-600/40 text-emerald-50'
+                : 'bg-[#331414] border-red-600/40 text-red-50'
             }`}
           >
-            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto">
+            <div className={`w-11 h-11 rounded-full flex items-center justify-center mx-auto border ${
+              feedback.type === 'success'
+                ? 'bg-emerald-950/80 border-emerald-500/30 text-emerald-400'
+                : 'bg-red-950/80 border-red-500/30 text-red-400'
+            }`}>
               {feedback.type === 'success' ? (
-                <CheckCircle className="w-10 h-10 text-white" />
+                <CheckCircle className="w-5 h-5" />
               ) : (
-                <AlertCircle className="w-10 h-10 text-white" />
+                <AlertCircle className="w-5 h-5" />
               )}
             </div>
-            <h3 className="text-xl sm:text-2xl font-bold text-white">
-              {feedback.type === 'success' ? '¡Guardado Exitosamente!' : 'Atención'}
-            </h3>
-            <p className="text-sm font-medium text-white/90">{feedback.message}</p>
+            
+            <div className="space-y-1">
+              <h3 className="text-lg font-serif font-normal tracking-wide text-white">
+                {feedback.type === 'success' ? '¡Cambios Guardados!' : 'Atención'}
+              </h3>
+              <p className="text-xs text-emerald-200/80 font-sans leading-relaxed">
+                {feedback.message}
+              </p>
+            </div>
+
             <button
               type="button"
               onClick={() => setFeedback(null)}
-              className="w-full py-3 bg-white text-emerald-950 hover:bg-emerald-50 rounded-2xl text-sm font-bold shadow-lg transition-all active:scale-95 cursor-pointer"
+              className="w-full py-2.5 bg-[#FEFAF9] text-[#122b1c] hover:bg-white rounded-xl text-xs font-semibold shadow-sm transition-all active:scale-95 cursor-pointer"
             >
-              Aceptar / Continuar Editando
+              Continuar Editando
             </button>
           </div>
         </div>
@@ -375,28 +384,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
           </div>
 
-          {/* Inline Green Success Alert Banner */}
-          {feedback && (
-            <div
-              className={`p-4 rounded-2xl border-2 flex items-center justify-between gap-3 text-sm font-bold shadow-md my-4 ${
-                feedback.type === 'success'
-                  ? 'bg-emerald-600 text-white border-emerald-300'
-                  : 'bg-red-600 text-white border-red-300'
-              }`}
-            >
-              <div className="flex items-center gap-3">
-                {feedback.type === 'success' ? (
-                  <CheckCircle className="w-6 h-6 text-white shrink-0" />
-                ) : (
-                  <AlertCircle className="w-6 h-6 text-white shrink-0" />
-                )}
-                <span>{feedback.message}</span>
-              </div>
-              <button onClick={() => setFeedback(null)} className="text-white hover:opacity-75 font-bold">
-                ✕
-              </button>
-            </div>
-          )}
+
 
           <div className="flex items-center justify-end gap-3 pt-2">
             <button
