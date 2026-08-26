@@ -54,12 +54,12 @@ export function App() {
     checkSession();
   }, []);
 
-  const loadData = async () => {
-    setLoading(true);
+  const loadData = async (silent = false) => {
+    if (!silent) setLoading(true);
     const [pList, aList] = await Promise.all([fetchProjects(), fetchArticles()]);
     setProjects(pList);
     setArticles(aList);
-    setLoading(false);
+    if (!silent) setLoading(false);
   };
 
   useEffect(() => {
@@ -75,7 +75,7 @@ export function App() {
   const handleSaveProjectsOrder = async (slugs: string[]) => {
     const res = await saveProjectsOrder(slugs);
     if (res.success) {
-      await loadData();
+      await loadData(true);
     }
     return res;
   };
@@ -88,14 +88,15 @@ export function App() {
   const handleSaveProject = async (project: WorkCase) => {
     const res = await saveProject(project);
     if (res.success) {
-      await loadData();
+      setEditingProject(project);
+      await loadData(true);
     }
     return res;
   };
 
   const handleDeleteProject = async (slug: string) => {
     await deleteProject(slug);
-    await loadData();
+    await loadData(true);
   };
 
   const handleDuplicateProject = async (project: WorkCase) => {
@@ -105,7 +106,7 @@ export function App() {
       client: `${project.client} (Copia)`,
     };
     await saveProject(duplicated);
-    await loadData();
+    await loadData(true);
   };
 
   const handleToggleFeatured = async (slug: string, featured: boolean) => {
@@ -113,7 +114,7 @@ export function App() {
     if (project) {
       const updated = { ...project, featured };
       await saveProject(updated);
-      await loadData();
+      await loadData(true);
     }
   };
 
@@ -131,7 +132,8 @@ export function App() {
   const handleSaveArticle = async (article: CraftLabArticle) => {
     const res = await saveArticle(article);
     if (res.success) {
-      await loadData();
+      setEditingArticle(article);
+      await loadData(true);
     }
     return res;
   };
