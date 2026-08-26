@@ -701,6 +701,29 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
             />
           </div>
 
+          {/* Inline Green Success Alert Banner */}
+          {feedback && (
+            <div
+              className={`p-4 rounded-2xl border-2 flex items-center justify-between gap-3 text-sm font-bold shadow-md my-4 ${
+                feedback.type === 'success'
+                  ? 'bg-emerald-600 text-white border-emerald-300'
+                  : 'bg-red-600 text-white border-red-300'
+              }`}
+            >
+              <div className="flex items-center gap-3">
+                {feedback.type === 'success' ? (
+                  <CheckCircle className="w-6 h-6 text-white shrink-0" />
+                ) : (
+                  <AlertCircle className="w-6 h-6 text-white shrink-0" />
+                )}
+                <span>{feedback.message}</span>
+              </div>
+              <button onClick={() => setFeedback(null)} className="text-white hover:opacity-75 font-bold">
+                ✕
+              </button>
+            </div>
+          )}
+
           {/* Bottom Actions */}
           <div className="flex items-center justify-end gap-3 pt-4">
             <button
