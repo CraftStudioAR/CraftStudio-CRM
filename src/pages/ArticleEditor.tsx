@@ -84,30 +84,33 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   return (
     <div className="space-y-6 animate-fadeIn pb-16">
       
-      {/* High Visibility Top-Centered Floating Green Success Popup */}
+      {/* Centered Green Success Modal Popup */}
       {feedback && (
-        <div className="fixed top-6 left-1/2 -translate-x-1/2 z-[9999] max-w-lg w-[92%] sm:w-auto">
+        <div className="fixed inset-0 z-[999999] flex items-center justify-center p-4 bg-black/50 backdrop-blur-xs">
           <div
-            className={`p-4 px-6 rounded-2xl shadow-[0_10px_40px_rgba(0,0,0,0.35)] flex items-center justify-between gap-4 text-sm md:text-base font-bold border-2 transition-all ${
+            className={`rounded-3xl p-6 sm:p-8 max-w-md w-full shadow-[0_20px_60px_rgba(0,0,0,0.5)] text-center space-y-4 border-2 animate-fadeIn ${
               feedback.type === 'success'
-                ? 'bg-emerald-600 text-white border-emerald-300 shadow-emerald-950/40'
-                : 'bg-red-600 text-white border-red-300 shadow-red-950/40'
+                ? 'bg-emerald-600 border-emerald-300 text-white'
+                : 'bg-red-600 border-red-300 text-white'
             }`}
           >
-            <div className="flex items-center gap-3">
+            <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mx-auto">
               {feedback.type === 'success' ? (
-                <CheckCircle className="w-6 h-6 text-white shrink-0" />
+                <CheckCircle className="w-10 h-10 text-white" />
               ) : (
-                <AlertCircle className="w-6 h-6 text-white shrink-0" />
+                <AlertCircle className="w-10 h-10 text-white" />
               )}
-              <span>{feedback.message}</span>
             </div>
-            <button 
-              onClick={() => setFeedback(null)} 
-              className="p-1 hover:bg-white/20 rounded-lg text-white font-bold text-base transition-colors"
-              title="Cerrar"
+            <h3 className="text-xl sm:text-2xl font-bold text-white">
+              {feedback.type === 'success' ? '¡Guardado Exitosamente!' : 'Atención'}
+            </h3>
+            <p className="text-sm font-medium text-white/90">{feedback.message}</p>
+            <button
+              type="button"
+              onClick={() => setFeedback(null)}
+              className="w-full py-3 bg-white text-emerald-950 hover:bg-emerald-50 rounded-2xl text-sm font-bold shadow-lg transition-all active:scale-95 cursor-pointer"
             >
-              ✕
+              Aceptar / Continuar Editando
             </button>
           </div>
         </div>
