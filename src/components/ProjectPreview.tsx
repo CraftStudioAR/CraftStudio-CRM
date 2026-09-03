@@ -111,6 +111,7 @@ function TextBox({
   leading = 'leading-relaxed',
   textAlign = 'left',
   device = 'desktop',
+  hasContainer = true,
 }: {
   text: string;
   className?: string;
@@ -124,6 +125,7 @@ function TextBox({
   leading?: string;
   textAlign?: 'left' | 'center' | 'right';
   device?: 'desktop' | 'tablet' | 'mobile';
+  hasContainer?: boolean;
 }) {
   const boldClass = bold ? 'font-bold' : 'font-normal';
   const italicClass = italic ? 'italic' : 'not-italic';
@@ -133,10 +135,14 @@ function TextBox({
   
   const elementId = `text-box-preview-${Math.random().toString(36).substr(2, 9)}`;
 
+  const boxStyle = hasContainer
+    ? { border: '1px solid rgba(0,0,0,0.10)', background: 'rgba(0,0,0,0.02)' }
+    : { border: '1px solid transparent', background: 'transparent' };
+
   return (
     <div
       className={`flex flex-col justify-center gap-4 rounded-2xl p-8 ${className}`}
-      style={{ border: '1px solid rgba(0,0,0,0.10)', background: 'rgba(0,0,0,0.02)' }}
+      style={boxStyle}
     >
       {text.split('\n\n').map((paragraph, idx) => {
         const pId = `${elementId}-${idx}`;
@@ -317,12 +323,16 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
 
     case 'imageFeature': {
       const isMobile = device === 'mobile';
+      const isRight = (block as any).mainSide === 'right' || (block as any).imagePosition === 'right' || (block as any).mainPosition === 'right';
+      const mainOrder = isRight ? 'order-2' : 'order-1';
+      const stackedOrder = isRight ? 'order-1' : 'order-2';
+
       const gridCols = isMobile ? 'grid-cols-1 gap-3' : 'grid-cols-2 gap-6';
       const stackedCols = isMobile ? 'grid-cols-2 gap-3' : 'grid-cols-1 gap-6';
       return (
         <div className={`grid ${gridCols} items-stretch`}>
-          <Img publicId={block.main.publicId} alt={block.main.alt} className="h-full" imgClassName="h-full object-cover" />
-          <div className={`grid ${stackedCols} self-start`}>
+          <Img publicId={block.main.publicId} alt={block.main.alt} className={`h-full ${mainOrder}`} imgClassName="h-full object-cover" />
+          <div className={`grid ${stackedCols} self-start ${stackedOrder}`}>
             {block.stacked.map((img, i) => (
               <Img key={i} publicId={img.publicId} alt={img.alt} />
             ))}
@@ -347,9 +357,21 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
       }
       const stackOnMobile = block.mobileLayout === 'stack';
       const count = block.images.length;
+      
+      const splitOption = (block as any).split || (block as any).layout;
+      const splitClasses: Record<string, string> = {
+        '30/70': 'grid-cols-[3fr_7fr]',
+        '40/60': 'grid-cols-[4fr_6fr]',
+        '50/50': 'grid-cols-2',
+        '60/40': 'grid-cols-[6fr_4fr]',
+        '70/30': 'grid-cols-[7fr_3fr]',
+        '66/34': 'grid-cols-[66fr_34fr]',
+        '34/66': 'grid-cols-[34fr_66fr]',
+      };
+
       const cols = isMobile 
         ? (stackOnMobile ? 'grid-cols-1' : (count === 4 ? 'grid-cols-4' : count === 3 ? 'grid-cols-3' : 'grid-cols-2'))
-        : (count === 4 ? 'grid-cols-4' : count === 3 ? 'grid-cols-3' : 'grid-cols-2');
+        : (count === 2 && splitOption && splitClasses[splitOption] ? splitClasses[splitOption] : (count === 4 ? 'grid-cols-4' : count === 3 ? 'grid-cols-3' : 'grid-cols-2'));
       const gap = isMobile ? 'gap-3' : 'gap-6';
 
       return (
@@ -404,6 +426,8 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
       const gridColClass = isMobile ? 'grid-cols-1' : (layoutClasses[resolvedLayout] || 'grid-cols-2');
       const gapClass = isMobile ? 'gap-3' : (device === 'tablet' ? 'gap-4' : 'gap-6');
 
+      const hasContainer = block.hasContainer !== false;
+
       return (
         <div className={`grid items-stretch ${gapClass} ${gridColClass}`}>
           {heightFromImage ? (
@@ -433,6 +457,7 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
             leading={block.leading}
             textAlign={block.textAlign}
             device={device}
+            hasContainer={hasContainer}
           />
         </div>
       );
