@@ -45,7 +45,7 @@ export type ProjectBlock =
       layout?: ColumnSplit;
       textAlign?: TextAlign;
       heightFrom?: "text" | "image";
-      mobileOrder?: 'imageFirst' | 'textFirst';
+      hasContainer?: boolean;
       fontFamily?: 'serif' | 'sans';
       bold?: boolean;
       italic?: boolean;

@@ -1032,6 +1032,15 @@ const BlockEditorForm: React.FC<{
                   />
                   Itálica (Italic)
                 </label>
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#666666]">
+                  <input
+                    type="checkbox"
+                    checked={block.hasContainer !== false}
+                    onChange={(e) => onChange({ ...block, hasContainer: e.target.checked })}
+                    className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                  />
+                  Mostrar contenedor (Caja)
+                </label>
               </div>
             </div>
 
