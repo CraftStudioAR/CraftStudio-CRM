@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { 
   isSupabaseConfigured, 
-  resetLocalData, 
-  seedSupabase, 
+  resetLocalData,
   fetchBrandLogos, 
   saveBrandLogos 
 } from '../lib/supabase';
@@ -27,9 +26,6 @@ interface SettingsProps {
 
 export const Settings: React.FC<SettingsProps> = ({ onRefreshData }) => {
   const [resetDone, setResetDone] = useState(false);
-  const [seeding, setSeeding] = useState(false);
-  const [seedStatus, setSeedStatus] = useState<'idle' | 'success' | 'error'>('idle');
-  const [seedError, setSeedError] = useState<string | null>(null);
 
   // Marquee Logos States
   const [logos, setLogos] = useState<Array<{ publicId: string; alt: string }>>([]);
@@ -59,21 +55,6 @@ export const Settings: React.FC<SettingsProps> = ({ onRefreshData }) => {
     setTimeout(() => setResetDone(false), 3000);
   };
 
-  const handleSeedSupabase = async () => {
-    setSeeding(true);
-    setSeedStatus('idle');
-    setSeedError(null);
-    const res = await seedSupabase();
-    setSeeding(false);
-    if (res.success) {
-      setSeedStatus('success');
-      onRefreshData();
-      setTimeout(() => setSeedStatus('idle'), 5000);
-    } else {
-      setSeedStatus('error');
-      setSeedError(res.error || 'Error al cargar datos');
-    }
-  };
 
   const handleAddLogo = () => {
     if (!newLogoId) return;
@@ -118,22 +99,6 @@ export const Settings: React.FC<SettingsProps> = ({ onRefreshData }) => {
           Administración de marcas asociadas, integraciones y estado de sincronización.
         </p>
       </div>
-
-      {/* Seeding Error Message */}
-      {seedStatus === 'error' && (
-        <div className="p-4 rounded-xl border border-red-200 bg-red-50 text-red-800 text-xs flex items-center gap-2 animate-fadeIn">
-          <AlertTriangle className="w-4 h-4 text-red-600 shrink-0" />
-          <span>No se pudieron cargar los datos: {seedError}</span>
-        </div>
-      )}
-
-      {/* Seeding Success Message */}
-      {seedStatus === 'success' && (
-        <div className="p-4 rounded-xl border border-emerald-200 bg-emerald-50 text-emerald-800 text-xs flex items-center gap-2 animate-fadeIn">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>¡Todos los proyectos y artículos originales han sido cargados con éxito en la base de datos!</span>
-        </div>
-      )}
 
       {/* SECCIÓN DEL MARQUEE DE LOGOS */}
       <div className="bg-white border border-[#E8E3E1] rounded-2xl p-6 md:p-8 space-y-6 shadow-sm">
@@ -286,18 +251,7 @@ export const Settings: React.FC<SettingsProps> = ({ onRefreshData }) => {
           </div>
         </div>
 
-        {isSupabaseConfigured ? (
-          <div className="flex flex-col sm:flex-row gap-3 self-start md:self-auto shrink-0">
-            <button
-              onClick={handleSeedSupabase}
-              disabled={seeding}
-              className="px-3.5 py-2 bg-[#a52f18] hover:bg-[#8b2612] disabled:opacity-50 text-[#FEFAF9] rounded-xl text-xs font-semibold flex items-center gap-2 whitespace-nowrap shadow-sm cursor-pointer transition-all active:scale-95"
-            >
-              <RefreshCw className={`w-3.5 h-3.5 ${seeding ? 'animate-spin' : ''}`} />
-              {seeding ? 'Sincronizando...' : seedStatus === 'success' ? '¡Sincronizado!' : 'Cargar Datos Iniciales'}
-            </button>
-          </div>
-        ) : (
+        {isSupabaseConfigured ? null : (
           <button
             onClick={handleResetLocal}
             className="px-3.5 py-2 bg-white hover:bg-[#F5EFEF] text-[#000000] rounded-xl text-xs font-medium border border-[#E8E3E1] flex items-center gap-2 whitespace-nowrap self-start md:self-auto shadow-sm"

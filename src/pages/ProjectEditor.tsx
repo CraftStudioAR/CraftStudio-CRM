@@ -167,7 +167,7 @@ export const ProjectEditor: React.FC<ProjectEditorProps> = ({
       }
     } catch (err: any) {
       console.error('Save error:', err);
-      setFeedback({ type: 'success', message: '¡Proyecto guardado exitosamente!' });
+      setFeedback({ type: 'error', message: err?.message || 'Error al guardar el proyecto. No se guardaron los cambios.' });
     } finally {
       setSaving(false);
     }

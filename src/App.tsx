@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { WorkCase, CraftLabArticle } from './types';
 import { 
-  fetchProjects, 
-  saveProject, 
-  deleteProject, 
-  fetchArticles, 
+  fetchProjects,
+  fetchProjectBySlug,
+  saveProject,
+  deleteProject,
+  fetchArticles,
+  fetchArticleBySlug,
   saveArticle, 
   deleteArticle,
   saveProjectsOrder,
@@ -20,7 +22,7 @@ import { ArticlesManager } from './pages/ArticlesManager';
 import { ArticleEditor } from './pages/ArticleEditor';
 import { Settings } from './pages/Settings';
 import { Login } from './pages/Login';
-import { Loader2 } from 'lucide-react';
+import { Loader2, AlertCircle } from 'lucide-react';
 
 export function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -29,6 +31,8 @@ export function App() {
   const [projects, setProjects] = useState<WorkCase[]>([]);
   const [articles, setArticles] = useState<CraftLabArticle[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const [editingProject, setEditingProject] = useState<WorkCase | null>(null);
   const [editingArticle, setEditingArticle] = useState<CraftLabArticle | null>(null);
@@ -56,10 +60,17 @@ export function App() {
 
   const loadData = async (silent = false) => {
     if (!silent) setLoading(true);
-    const [pList, aList] = await Promise.all([fetchProjects(), fetchArticles()]);
-    setProjects(pList);
-    setArticles(aList);
-    if (!silent) setLoading(false);
+    try {
+      const [pList, aList] = await Promise.all([fetchProjects(), fetchArticles()]);
+      setProjects(pList);
+      setArticles(aList);
+      setLoadError(null);
+    } catch (err: any) {
+      // Nunca mostramos datos viejos del navegador: si la base no responde, lo decimos.
+      setLoadError(err?.message || 'No se pudo conectar con la base de datos.');
+    } finally {
+      if (!silent) setLoading(false);
+    }
   };
 
   useEffect(() => {
@@ -80,42 +91,60 @@ export function App() {
     return res;
   };
 
-  const handleOpenEditProject = (project: WorkCase) => {
-    setEditingProject(project);
-    setActiveTab('project-editor');
+  // El editor siempre arranca con la versión actual de la base, no con la del listado
+  // (que puede tener horas si la pestaña quedó abierta).
+  const handleOpenEditProject = async (project: WorkCase) => {
+    try {
+      const fresh = await fetchProjectBySlug(project.slug);
+      setEditingProject(fresh);
+      setActionError(null);
+      setActiveTab('project-editor');
+    } catch (err: any) {
+      setActionError(err?.message || 'No se pudo abrir el proyecto.');
+    }
   };
 
   const handleSaveProject = async (project: WorkCase) => {
     const res = await saveProject(project);
-    if (res.success) {
-      setEditingProject(project);
+    if (res.success && res.saved) {
+      setEditingProject(res.saved);
       await loadData(true);
     }
     return res;
   };
 
   const handleDeleteProject = async (slug: string) => {
-    await deleteProject(slug);
+    const res = await deleteProject(slug);
+    if (!res.success) setActionError(res.error || 'No se pudo eliminar el proyecto.');
     await loadData(true);
   };
 
   const handleDuplicateProject = async (project: WorkCase) => {
-    const duplicated: WorkCase = {
-      ...JSON.parse(JSON.stringify(project)),
-      slug: `${project.slug}-copia`,
-      client: `${project.client} (Copia)`,
-    };
-    await saveProject(duplicated);
+    try {
+      const fresh = await fetchProjectBySlug(project.slug);
+      const { id, created_at, updated_at, ...rest } = JSON.parse(JSON.stringify(fresh));
+      const duplicated: WorkCase = {
+        ...rest,
+        slug: `${fresh.slug}-copia`,
+        client: `${fresh.client} (Copia)`,
+      };
+      const res = await saveProject(duplicated);
+      if (!res.success) setActionError(res.error || 'No se pudo duplicar el proyecto.');
+    } catch (err: any) {
+      setActionError(err?.message || 'No se pudo duplicar el proyecto.');
+    }
     await loadData(true);
   };
 
   const handleToggleFeatured = async (slug: string, featured: boolean) => {
-    const project = projects.find((p) => p.slug === slug);
-    if (project) {
-      const updated = { ...project, featured };
-      await saveProject(updated);
-      await loadData(true);
+    try {
+      const fresh = await fetchProjectBySlug(slug);
+      const res = await saveProject({ ...fresh, featured });
+      if (!res.success) setActionError(res.error || 'No se pudo actualizar el destacado.');
+    } catch (err: any) {
+      setActionError(err?.message || 'No se pudo actualizar el destacado.');
     }
+    await loadData(true);
   };
 
   // Handlers for Articles
@@ -124,15 +153,21 @@ export function App() {
     setActiveTab('article-editor');
   };
 
-  const handleOpenEditArticle = (article: CraftLabArticle) => {
-    setEditingArticle(article);
-    setActiveTab('article-editor');
+  const handleOpenEditArticle = async (article: CraftLabArticle) => {
+    try {
+      const fresh = await fetchArticleBySlug(article.slug);
+      setEditingArticle(fresh);
+      setActionError(null);
+      setActiveTab('article-editor');
+    } catch (err: any) {
+      setActionError(err?.message || 'No se pudo abrir el artículo.');
+    }
   };
 
   const handleSaveArticle = async (article: CraftLabArticle) => {
     const res = await saveArticle(article);
-    if (res.success) {
-      setEditingArticle(article);
+    if (res.success && res.saved) {
+      setEditingArticle(res.saved);
       await loadData(true);
     }
     return res;
@@ -147,7 +182,8 @@ export function App() {
   };
 
   const handleDeleteArticle = async (idOrSlug: string) => {
-    await deleteArticle(idOrSlug);
+    const res = await deleteArticle(idOrSlug);
+    if (!res.success) setActionError(res.error || 'No se pudo eliminar el artículo.');
     await loadData();
   };
 
@@ -189,12 +225,34 @@ export function App() {
       {/* Main Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 md:px-8 py-6">
         
+        {(loadError || actionError) && !loading && (
+          <div className="mb-6 flex items-start gap-3 rounded-2xl border border-red-200 bg-red-50 px-4 py-3 text-xs text-red-800">
+            <AlertCircle className="w-4 h-4 mt-0.5 shrink-0" />
+            <p className="flex-1 leading-relaxed">{actionError || loadError}</p>
+            {loadError && !actionError ? (
+              <button
+                onClick={() => loadData()}
+                className="shrink-0 rounded-lg border border-red-200 bg-white px-2.5 py-1 font-semibold hover:bg-red-100"
+              >
+                Reintentar
+              </button>
+            ) : (
+              <button
+                onClick={() => setActionError(null)}
+                className="shrink-0 rounded-lg border border-red-200 bg-white px-2.5 py-1 font-semibold hover:bg-red-100"
+              >
+                Cerrar
+              </button>
+            )}
+          </div>
+        )}
+
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24 space-y-4">
             <Loader2 className="w-8 h-8 text-[#a52f18] animate-spin" />
             <p className="text-xs text-[#666666] font-mono">Cargando portafolio y contenidos...</p>
           </div>
-        ) : (
+        ) : loadError && projects.length === 0 && articles.length === 0 ? null : (
           <>
             {activeTab === 'dashboard' && (
               <Dashboard
