@@ -151,6 +151,8 @@ export type CraftLabArticle = {
   image: string;
   desc: string;
   aspect?: string;
+  /** false oculta la portada dentro de la nota (en la grilla se sigue usando). */
+  show_cover?: boolean;
   content: string;
   blocks?: ProjectBlock[];
   created_at?: string;

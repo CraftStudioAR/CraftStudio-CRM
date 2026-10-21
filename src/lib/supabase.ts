@@ -438,6 +438,7 @@ export async function saveArticle(article: CraftLabArticle): Promise<SaveResult<
       image: article.image,
       desc: article.desc,
       aspect: article.aspect || 'aspect-[4/5]',
+      show_cover: article.show_cover !== false,
       content: article.content,
       blocks: article.blocks || [],
       updated_at: new Date().toISOString(),

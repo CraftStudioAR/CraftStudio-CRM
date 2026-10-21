@@ -273,7 +273,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
                   </p>
                 </div>
 
-                {formData.image && (
+                {formData.image && formData.show_cover !== false && (
                   <div className="rounded-2xl overflow-hidden border border-[#E8E3E1]">
                     <img
                       src={getImageUrl(formData.image)}
@@ -364,6 +364,16 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
                   onChange={(newId) => setFormData({ ...formData, image: newId })}
                   label="Imagen de Portada (Public ID o URL)"
                 />
+                <label className="flex items-center gap-1.5 cursor-pointer text-xs text-[#666666]">
+                  <input
+                    type="checkbox"
+                    checked={formData.show_cover !== false}
+                    onChange={(e) => setFormData({ ...formData, show_cover: e.target.checked })}
+                    className="rounded border-[#E8E3E1] text-[#a52f18] focus:ring-[#a52f18] w-4 h-4 cursor-pointer"
+                  />
+                  Mostrar la portada dentro de la nota
+                </label>
+                <p className="text-[11px] text-[#666666]">En la grilla de Craft Lab se usa siempre.</p>
               </div>
 
               <div>
