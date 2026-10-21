@@ -14,7 +14,7 @@ import {
 import { getImageUrl } from '../lib/cloudinary';
 import { ImageUploader } from '../components/ImageUploader';
 import { BlockBuilder } from '../components/BlockBuilder';
-import { Block } from '../components/ProjectPreview';
+import { Block, spacingStyle } from '../components/ProjectPreview';
 import { CustomSelect } from '../components/CustomSelect';
 
 interface ArticleEditorProps {
@@ -284,9 +284,11 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
                 )}
 
                 {formData.blocks && formData.blocks.length > 0 ? (
-                  <div className="flex flex-col gap-6 md:gap-10 mt-8">
+                  <div className={`flex flex-col mt-8 ${previewDevice === 'mobile' ? 'gap-5' : 'gap-6'}`}>
                     {formData.blocks.map((block, index) => (
-                      <Block key={index} block={block} device={previewDevice} />
+                      <div key={index} style={spacingStyle(block, formData.blocks?.[index - 1], previewDevice === 'mobile' ? 20 : 24)}>
+                        <Block block={block} device={previewDevice} />
+                      </div>
                     ))}
                   </div>
                 ) : (

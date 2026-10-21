@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import { WorkCase, ProjectBlock, ColumnSplit } from '../types';
+import { WorkCase, ProjectBlock, ColumnSplit, ProjectImage, BlockSpacing } from '../types';
 import { getImageUrl } from '../lib/cloudinary';
+import { renderRichText } from '../lib/richText';
 import { Maximize2, X } from 'lucide-react';
 
 function getResponsiveTextStyle(
@@ -70,21 +71,39 @@ interface ProjectPreviewProps {
 // Img — idéntico al <Img> del frontend
 // (sin hover ni lightbox, solo visual)
 // ─────────────────────────────────────────────
+const CAPTION_SIZE = { sm: 'text-[11px]', md: 'text-xs md:text-sm', lg: 'text-sm md:text-base' } as const;
+const CAPTION_GAP = { tight: 'mt-1.5', normal: 'mt-3', loose: 'mt-6' } as const;
+
+function Caption({ image }: { image?: ProjectImage }) {
+  if (!image?.caption) return null;
+  return (
+    <figcaption
+      className={`text-left leading-snug ${CAPTION_SIZE[image.captionSize || 'sm']} ${CAPTION_GAP[image.captionGap || 'normal']}`}
+      style={{ color: 'rgba(0,0,0,0.60)' }}
+    >
+      {image.caption}
+    </figcaption>
+  );
+}
+
 function Img({
   publicId,
   alt,
   aspect,
   className = '',
   imgClassName = '',
+  caption,
 }: {
   publicId: string;
   alt: string;
   aspect?: string;    // CSS aspect-ratio value, e.g. "4 / 5"
   className?: string;
   imgClassName?: string;
+  /** Imagen de la que se toma el pie de foto, si tiene. */
+  caption?: ProjectImage;
 }) {
-  return (
-    <div className={`block w-full overflow-hidden rounded-2xl ${className}`}>
+  const frame = (
+    <div className={`block w-full overflow-hidden rounded-2xl ${caption?.caption ? 'flex-1 min-h-0' : className}`}>
       <img
         src={getImageUrl(publicId)}
         alt={alt}
@@ -93,6 +112,26 @@ function Img({
       />
     </div>
   );
+
+  if (!caption?.caption) return frame;
+
+  // Con pie de foto, las clases de layout (alto, orden) pasan a la figura.
+  return (
+    <figure className={`flex flex-col w-full ${className}`}>
+      {frame}
+      <Caption image={caption} />
+    </figure>
+  );
+}
+
+const SPACING_PX: Record<Exclude<BlockSpacing, 'normal'>, number> = { tight: 4, sm: 12, lg: 64, xl: 120 };
+
+/** Igual que en el sitio: margen para que el espacio elegido sobre un bloque sea la
+ *  distancia real con el anterior (descuenta el gap de la lista y el my-4 de los textos). */
+export function spacingStyle(block: ProjectBlock, prev: ProjectBlock | undefined, gapPx: number): React.CSSProperties | undefined {
+  if (!prev || !block.spacingTop || block.spacingTop === 'normal') return undefined;
+  const own = (prev.type === 'text' ? 16 : 0) + (block.type === 'text' ? 16 : 0);
+  return { marginTop: SPACING_PX[block.spacingTop] - own - gapPx };
 }
 
 // ─────────────────────────────────────────────
@@ -158,7 +197,7 @@ function TextBox({
           <React.Fragment key={idx}>
             {styleElement}
             <p id={pId} className={textClass} style={sizeStyle}>
-              {paragraph}
+              {renderRichText(paragraph)}
             </p>
           </React.Fragment>
         );
@@ -319,7 +358,7 @@ function Testimonial({
 export function Block({ block, device = 'desktop' }: { block: ProjectBlock; device?: 'desktop' | 'tablet' | 'mobile' }) {
   switch (block.type) {
     case 'image':
-      return <Img publicId={block.image.publicId} alt={block.image.alt} />;
+      return <Img publicId={block.image.publicId} alt={block.image.alt} caption={block.image} />;
 
     case 'imageFeature': {
       const isMobile = device === 'mobile';
@@ -331,10 +370,10 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
       const stackedCols = isMobile ? 'grid-cols-2 gap-3' : 'grid-cols-1 gap-6';
       return (
         <div className={`grid ${gridCols} items-stretch`}>
-          <Img publicId={block.main.publicId} alt={block.main.alt} className={`h-full ${mainOrder}`} imgClassName="h-full object-cover" />
+          <Img publicId={block.main.publicId} alt={block.main.alt} caption={block.main} className={`h-full ${mainOrder}`} imgClassName="h-full object-cover" />
           <div className={`grid ${stackedCols} self-start ${stackedOrder}`}>
             {block.stacked.map((img, i) => (
-              <Img key={i} publicId={img.publicId} alt={img.alt} />
+              <Img key={i} publicId={img.publicId} alt={img.alt} caption={img} />
             ))}
           </div>
         </div>
@@ -349,7 +388,7 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
           <div className={`flex items-start ${pairGap}`}>
             {block.images.map((img, i) => (
               <div key={i} className="min-w-0" style={{ flex: `${img.ratio} 1 0%` }}>
-                <Img publicId={img.publicId} alt={img.alt} />
+                <Img publicId={img.publicId} alt={img.alt} caption={img} />
               </div>
             ))}
           </div>
@@ -381,6 +420,7 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
               key={i}
               publicId={img.publicId}
               alt={img.alt}
+              caption={img}
               aspect={block.aspect && block.aspect !== 'auto' ? block.aspect.replace(':', ' / ') : undefined}
               className="h-full w-full"
               imgClassName="h-full object-cover"
@@ -431,18 +471,21 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
       return (
         <div className={`grid items-stretch ${gapClass} ${gridColClass}`}>
           {heightFromImage ? (
-            <Img publicId={block.image.publicId} alt={block.image.alt} className={imageOrderClass} />
+            <Img publicId={block.image.publicId} alt={block.image.alt} caption={block.image} className={imageOrderClass} />
           ) : (
-            <div
-              className={`relative w-full overflow-hidden rounded-2xl ${imageOrderClass}`}
-              style={{ aspectRatio: '4 / 3' }}
-            >
-              <img
-                src={getImageUrl(block.image.publicId)}
-                alt={block.image.alt}
-                className="absolute inset-0 h-full w-full object-cover"
-              />
-            </div>
+            <figure className={`flex flex-col ${imageOrderClass}`}>
+              <div
+                className="relative w-full overflow-hidden rounded-2xl"
+                style={{ aspectRatio: '4 / 3' }}
+              >
+                <img
+                  src={getImageUrl(block.image.publicId)}
+                  alt={block.image.alt}
+                  className="absolute inset-0 h-full w-full object-cover"
+                />
+              </div>
+              <Caption image={block.image} />
+            </figure>
           )}
           <TextBox
             text={block.text}
@@ -486,7 +529,7 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
 
     case 'quote':
       // En el front, solo muestra la imagen (sin overlay de texto)
-      return <Img publicId={block.image.publicId} alt={block.image.alt} />;
+      return <Img publicId={block.image.publicId} alt={block.image.alt} caption={block.image} />;
 
     case 'stats':
       return <StatsPanel title={block.title} items={block.items} highlight={block.highlight} />;
@@ -560,7 +603,7 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
                 <React.Fragment key={idx}>
                   {styleElement}
                   <p id={pId} className={textClass} style={sizeStyle}>
-                    {paragraph}
+                    {renderRichText(paragraph)}
                   </p>
                 </React.Fragment>
               );
@@ -631,10 +674,13 @@ export const ProjectPreview: React.FC<ProjectPreviewProps & { device?: 'desktop'
       return null;
     }
     const blocksGap = device === 'mobile' ? 'gap-5' : 'gap-6';
+    const gapPx = device === 'mobile' ? 20 : 24;
     return (
       <div className={`flex flex-col ${blocksGap}`} style={{ maxWidth: '1400px', margin: '0 auto' }}>
         {blocks.map((block, i) => (
-          <Block key={i} block={block} device={device} />
+          <div key={i} style={spacingStyle(block, blocks[i - 1], gapPx)}>
+            <Block block={block} device={device} />
+          </div>
         ))}
       </div>
     );

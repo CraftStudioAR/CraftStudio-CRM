@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import {
   ProjectBlock,
   ProjectImage,
@@ -6,6 +6,9 @@ import {
   AspectRatioOption,
   ColumnSplit,
   TextAlign,
+  BlockSpacing,
+  CaptionSize,
+  CaptionGap,
 } from '../types';
 import {
   ArrowUp,
@@ -26,6 +29,9 @@ import {
   AlignRight,
   Maximize2,
   Move,
+  Bold,
+  Italic,
+  Type,
 } from 'lucide-react';
 import { getImageUrl } from '../lib/cloudinary';
 import { ImageUploader } from './ImageUploader';
@@ -126,8 +132,104 @@ const ImageInputGroup = ({
       placeholder="Texto alternativo de la imagen (alt)..."
       className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none focus:border-[#a52f18]"
     />
+    <input
+      type="text"
+      value={image.caption || ''}
+      onChange={(e) => onChange({ ...image, caption: e.target.value })}
+      placeholder="Pie de foto (opcional)..."
+      className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3 py-2 text-xs text-[#000000] outline-none focus:border-[#a52f18]"
+    />
+    {image.caption && (
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        <ToggleGroup<CaptionSize>
+          label="Tamaño del pie"
+          value={image.captionSize || 'sm'}
+          options={[
+            { value: 'sm', label: 'Chico' },
+            { value: 'md', label: 'Mediano' },
+            { value: 'lg', label: 'Grande' },
+          ]}
+          onChange={(v) => onChange({ ...image, captionSize: v })}
+        />
+        <ToggleGroup<CaptionGap>
+          label="Distancia a la imagen"
+          value={image.captionGap || 'normal'}
+          options={[
+            { value: 'tight', label: 'Junto' },
+            { value: 'normal', label: 'Normal' },
+            { value: 'loose', label: 'Separado' },
+          ]}
+          onChange={(v) => onChange({ ...image, captionGap: v })}
+        />
+      </div>
+    )}
   </div>
 );
+
+/** Textarea con botones para marcar negrita, itálica y texto grande dentro del
+ *  mismo bloque. Envuelve la selección con **…**, *…* o ^^…^^ (el sitio los dibuja). */
+const RichTextArea = ({
+  value,
+  onChange,
+  rows,
+  placeholder,
+  className,
+}: {
+  value: string;
+  onChange: (value: string) => void;
+  rows: number;
+  placeholder: string;
+  className: string;
+}) => {
+  const ref = useRef<HTMLTextAreaElement>(null);
+
+  const wrap = (marker: string) => {
+    const el = ref.current;
+    if (!el) return;
+    const { selectionStart: start, selectionEnd: end } = el;
+    const selected = value.slice(start, end) || 'texto';
+    onChange(value.slice(0, start) + marker + selected + marker + value.slice(end));
+    // Deja seleccionado el texto marcado para poder seguir aplicando formato
+    requestAnimationFrame(() => {
+      el.focus();
+      el.setSelectionRange(start + marker.length, start + marker.length + selected.length);
+    });
+  };
+
+  const buttons = [
+    { marker: '**', label: 'Negrita', icon: <Bold className="w-3.5 h-3.5" /> },
+    { marker: '*', label: 'Itálica', icon: <Italic className="w-3.5 h-3.5" /> },
+    { marker: '^^', label: 'Grande', icon: <Type className="w-3.5 h-3.5" /> },
+  ];
+
+  return (
+    <div className="space-y-1.5">
+      <div className="flex flex-wrap items-center gap-1.5">
+        {buttons.map((b) => (
+          <button
+            key={b.marker}
+            type="button"
+            onMouseDown={(e) => e.preventDefault()}
+            onClick={() => wrap(b.marker)}
+            className="flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-[11px] font-medium border bg-white text-[#444] border-[#E8E3E1] hover:border-[#a52f18]/40 hover:bg-[#FEFAF9] transition-all"
+          >
+            {b.icon}
+            {b.label}
+          </button>
+        ))}
+        <span className="text-[10px] text-[#999]">Seleccioná texto y elegí un formato.</span>
+      </div>
+      <textarea
+        ref={ref}
+        rows={rows}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        placeholder={placeholder}
+        className={className}
+      />
+    </div>
+  );
+};
 
 // Visual selectors
 const ASPECT_OPTIONS: { value: AspectRatioOption; label: string }[] = [
@@ -395,6 +497,20 @@ export const BlockBuilder: React.FC<BlockBuilderProps> = ({ blocks, onChange }) 
               {/* Editing form */}
               {activeEditingIndex === idx && (
                 <div className="p-5 bg-white space-y-5 rounded-b-2xl">
+                  {idx > 0 && (
+                    <ToggleGroup<BlockSpacing>
+                      label="Espacio con el bloque anterior"
+                      value={block.spacingTop || 'normal'}
+                      options={[
+                        { value: 'tight', label: 'Pegado' },
+                        { value: 'sm', label: 'Chico' },
+                        { value: 'normal', label: 'Normal' },
+                        { value: 'lg', label: 'Amplio' },
+                        { value: 'xl', label: 'Muy amplio' },
+                      ]}
+                      onChange={(v) => handleUpdateBlock(idx, { ...block, spacingTop: v })}
+                    />
+                  )}
                   <BlockEditorForm
                     block={block}
                     onChange={(updated) => handleUpdateBlock(idx, updated)}
@@ -663,10 +779,10 @@ const BlockEditorForm: React.FC<{
             <label className="block text-[11px] font-medium text-[#888] mb-1.5 uppercase tracking-wide">
               Contenido del Párrafo (Soporta saltos de línea)
             </label>
-            <textarea
+            <RichTextArea
               rows={6}
               value={block.text}
-              onChange={(e) => onChange({ ...block, text: e.target.value })}
+              onChange={(text) => onChange({ ...block, text })}
               placeholder="Escribí el cuerpo del texto aquí..."
               className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3.5 py-2.5 text-xs text-[#000000] outline-none font-serif text-sm leading-relaxed resize-y"
             />
@@ -959,10 +1075,10 @@ const BlockEditorForm: React.FC<{
             <label className="block text-[11px] font-medium text-[#888] mb-1 uppercase tracking-wide">
               Texto descriptivo
             </label>
-            <textarea
+            <RichTextArea
               rows={4}
               value={block.text}
-              onChange={(e) => onChange({ ...block, text: e.target.value })}
+              onChange={(text) => onChange({ ...block, text })}
               placeholder="Desarrollá la historia o descripción de esta imagen..."
               className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3.5 py-2.5 text-xs text-[#000000] outline-none resize-y focus:border-[#a52f18] transition-colors"
             />

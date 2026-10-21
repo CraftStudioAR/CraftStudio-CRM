@@ -2,7 +2,17 @@ export type ProjectImage = {
   publicId: string;
   alt: string;
   ratio?: number;
+  /** Pie de foto opcional, con su tamaño y la distancia a la imagen. */
+  caption?: string;
+  captionSize?: CaptionSize;
+  captionGap?: CaptionGap;
 };
+
+export type CaptionSize = 'sm' | 'md' | 'lg';
+export type CaptionGap = 'tight' | 'normal' | 'loose';
+
+/** Espacio sobre un bloque. Sin valor (o 'normal') queda el espacio de siempre. */
+export type BlockSpacing = 'tight' | 'sm' | 'normal' | 'lg' | 'xl';
 
 export type Stat = {
   value: number;
@@ -16,7 +26,7 @@ export type AspectRatioOption = 'auto' | '16:9' | '4:3' | '3:2' | '1:1' | '4:5' 
 export type ColumnSplit = '50/50' | '60/40' | '40/60' | '70/30' | '30/70' | '66/34' | '34/66';
 export type TextAlign = 'left' | 'center' | 'right';
 
-export type ProjectBlock =
+export type ProjectBlock = (
   | {
       type: "image";
       image: ProjectImage;
@@ -104,7 +114,10 @@ export type ProjectBlock =
       sizeDesktop?: string;
       tracking?: string;
       leading?: string;
-    };
+    }
+) & {
+  spacingTop?: BlockSpacing;
+};
 
 export type WorkCase = {
   id?: string;
