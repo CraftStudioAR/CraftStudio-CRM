@@ -32,6 +32,7 @@ import {
   Bold,
   Italic,
   Type,
+  Underline,
 } from 'lucide-react';
 import { getImageUrl } from '../lib/cloudinary';
 import { ImageUploader } from './ImageUploader';
@@ -166,8 +167,8 @@ const ImageInputGroup = ({
   </div>
 );
 
-/** Textarea con botones para marcar negrita, itálica y texto grande dentro del
- *  mismo bloque. Envuelve la selección con **…**, *…* o ^^…^^ (el sitio los dibuja). */
+/** Textarea con botones para marcar negrita, itálica, subrayado y texto grande dentro del
+ *  mismo bloque. Envuelve la selección con **…**, *…*, __…__ o ^^…^^ (el sitio los dibuja). */
 const RichTextArea = ({
   value,
   onChange,
@@ -199,6 +200,7 @@ const RichTextArea = ({
   const buttons = [
     { marker: '**', label: 'Negrita', icon: <Bold className="w-3.5 h-3.5" /> },
     { marker: '*', label: 'Itálica', icon: <Italic className="w-3.5 h-3.5" /> },
+    { marker: '__', label: 'Subrayado', icon: <Underline className="w-3.5 h-3.5" /> },
     { marker: '^^', label: 'Grande', icon: <Type className="w-3.5 h-3.5" /> },
   ];
 

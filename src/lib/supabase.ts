@@ -638,6 +638,31 @@ export async function saveArticlesOrder(slugs: string[], sortMode: 'date' | 'cus
   return { success: true };
 }
 
+/** El orden personalizado guarda slugs: si un artículo cambia de slug al editarlo, lo reemplazamos para que no se vaya al final. */
+export async function renameArticleInOrder(oldSlug: string, newSlug: string): Promise<void> {
+  let customOrder: string[] = [];
+  let sortMode: 'date' | 'custom' = 'date';
+
+  try {
+    if (isSupabaseConfigured && supabase) {
+      const { data } = await supabase.from('craft_lab_articles').select('desc').eq('slug', '__settings__').maybeSingle();
+      if (!data?.desc) return;
+      const parsed = JSON.parse(data.desc);
+      customOrder = Array.isArray(parsed.customOrder) ? parsed.customOrder : [];
+      sortMode = parsed.sortMode || 'date';
+    } else {
+      const parsed = JSON.parse(localStorage.getItem('craftstudio_crm_articles_order') || '{}');
+      customOrder = Array.isArray(parsed.customOrder) ? parsed.customOrder : [];
+      sortMode = parsed.sortMode || 'date';
+    }
+  } catch (e) {
+    return;
+  }
+
+  if (!customOrder.includes(oldSlug)) return;
+  await saveArticlesOrder(customOrder.map((s) => (s === oldSlug ? newSlug : s)), sortMode);
+}
+
 export async function fetchBrandLogos(): Promise<Array<{ publicId: string; alt: string }>> {
   const defaultLogos = [
     { publicId: 'yokoo_jdzsmb', alt: 'Yokoo Studio' },

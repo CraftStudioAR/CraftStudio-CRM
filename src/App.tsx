@@ -11,6 +11,7 @@ import {
   deleteArticle,
   saveProjectsOrder,
   saveArticlesOrder,
+  renameArticleInOrder,
   supabase,
   isSupabaseConfigured
 } from './lib/supabase';
@@ -165,8 +166,12 @@ export function App() {
   };
 
   const handleSaveArticle = async (article: CraftLabArticle) => {
+    const previousSlug = editingArticle?.slug;
     const res = await saveArticle(article);
     if (res.success && res.saved) {
+      if (previousSlug && previousSlug !== res.saved.slug) {
+        await renameArticleInOrder(previousSlug, res.saved.slug);
+      }
       setEditingArticle(res.saved);
       await loadData(true);
     }

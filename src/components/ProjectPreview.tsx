@@ -28,27 +28,12 @@ function getResponsiveTextStyle(
       style.fontSize = sizeTablet;
     }
   } else {
-    const classes = [];
-    if (sizeMobile.startsWith('text-')) classes.push(sizeMobile);
-    if (sizeTablet.startsWith('text-')) classes.push(`md:${sizeTablet}`);
-    if (sizeDesktop.startsWith('text-')) classes.push(`lg:${sizeDesktop}`);
-    className = classes.join(' ');
-
-    const hasCustom = !sizeMobile.startsWith('text-') || !sizeTablet.startsWith('text-') || !sizeDesktop.startsWith('text-');
-    if (hasCustom) {
-      const cssRules = [];
-      if (!sizeMobile.startsWith('text-')) {
-        cssRules.push(`#${elementId} { font-size: ${sizeMobile}; }`);
-      }
-      if (!sizeTablet.startsWith('text-')) {
-        cssRules.push(`@media (min-width: 768px) { #${elementId} { font-size: ${sizeTablet}; } }`);
-      }
-      if (!sizeDesktop.startsWith('text-')) {
-        cssRules.push(`@media (min-width: 1024px) { #${elementId} { font-size: ${sizeDesktop}; } }`);
-      }
-      styleElement = (
-        <style dangerouslySetInnerHTML={{ __html: cssRules.join('\n') }} />
-      );
+    // Vista de escritorio: se usa directo el tamaño de desktop. Antes se armaba
+    // `lg:${size}` y Tailwind no genera clases armadas por partes (el 5XL se veía como 4XL).
+    if (sizeDesktop.startsWith('text-')) {
+      className = sizeDesktop;
+    } else {
+      style.fontSize = sizeDesktop;
     }
   }
 
@@ -192,7 +177,7 @@ function TextBox({
           sizeDesktop,
           device
         );
-        const textClass = `text-ink/80 text-${textAlign} ${fontFamilyClass} ${boldClass} ${italicClass} ${trackingClass} ${leadingClass} ${resolvedSizeClass}`;
+        const textClass = `whitespace-pre-line text-ink/80 text-${textAlign} ${fontFamilyClass} ${boldClass} ${italicClass} ${trackingClass} ${leadingClass} ${resolvedSizeClass}`;
         return (
           <React.Fragment key={idx}>
             {styleElement}
@@ -598,7 +583,7 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
                 sizeDesktop,
                 device
               );
-              const textClass = `text-ink/80 text-${block.align || 'left'} ${fontFamily} ${boldClass} ${italicClass} ${trackingClass} ${leadingClass} ${resolvedSizeClass}`;
+              const textClass = `whitespace-pre-line text-ink/80 text-${block.align || 'left'} ${fontFamily} ${boldClass} ${italicClass} ${trackingClass} ${leadingClass} ${resolvedSizeClass}`;
               return (
                 <React.Fragment key={idx}>
                   {styleElement}
