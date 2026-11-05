@@ -358,7 +358,7 @@ export function Block({ block, device = 'desktop' }: { block: ProjectBlock; devi
           <Img publicId={block.main.publicId} alt={block.main.alt} caption={block.main} className={`h-full ${mainOrder}`} imgClassName="h-full object-cover" />
           <div className={`grid ${stackedCols} self-start ${stackedOrder}`}>
             {block.stacked.map((img, i) => (
-              <Img key={i} publicId={img.publicId} alt={img.alt} caption={img} />
+              <Img key={i} publicId={img.publicId} alt={img.alt} caption={img} className={isMobile ? 'h-full' : ''} imgClassName={isMobile ? 'h-full object-cover' : ''} />
             ))}
           </div>
         </div>

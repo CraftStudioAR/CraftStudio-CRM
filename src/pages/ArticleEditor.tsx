@@ -17,6 +17,13 @@ import { BlockBuilder } from '../components/BlockBuilder';
 import { Block, spacingStyle } from '../components/ProjectPreview';
 import { CustomSelect } from '../components/CustomSelect';
 
+// Mismos tamaños que la bajada en LabDetalle de la web.
+const DESC_SIZES = {
+  sm: 'text-base md:text-lg',
+  md: 'text-lg md:text-xl',
+  lg: 'text-xl md:text-2xl',
+} as const;
+
 interface ArticleEditorProps {
   initialArticle?: CraftLabArticle | null;
   onSave: (article: CraftLabArticle) => Promise<{ success: boolean; error?: string }>;
@@ -268,7 +275,7 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
                   <h1 className="text-3xl md:text-5xl font-serif font-normal text-[#000000] tracking-tight leading-tight">
                     {formData.title || 'Título del Artículo'}
                   </h1>
-                  <p className="text-base text-[#666666] italic font-serif">
+                  <p className={`${DESC_SIZES[formData.desc_size || 'lg']} text-[#666666] italic font-serif`}>
                     {formData.desc}
                   </p>
                 </div>
@@ -404,6 +411,20 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
                 placeholder="Resumen del artículo que aparece en la grilla..."
                 className="w-full bg-[#FEFAF9] border border-[#E8E3E1] rounded-xl px-3.5 py-2.5 text-xs text-[#000000] outline-none resize-y"
               />
+            </div>
+
+            <div>
+              <label className="block text-xs font-medium text-[#666666] mb-1.5">Tamaño de la Bajada dentro de la Nota</label>
+              <CustomSelect
+                value={formData.desc_size || 'lg'}
+                onChange={(v) => setFormData({ ...formData, desc_size: v as 'sm' | 'md' | 'lg' })}
+                options={[
+                  { value: 'lg', label: 'Grande' },
+                  { value: 'md', label: 'Mediana' },
+                  { value: 'sm', label: 'Chica' },
+                ]}
+              />
+              <p className="mt-1.5 text-[11px] text-[#666666]">En la grilla de Craft Lab no cambia.</p>
             </div>
 
             <div className="border-t border-[#E8E3E1] pt-6 space-y-4">
