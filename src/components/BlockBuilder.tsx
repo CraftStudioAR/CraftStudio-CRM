@@ -731,7 +731,7 @@ const SIZE_PRESETS = [
   { value: '10rem', label: '10rem' },
 ];
 
-const SizeInputWithPresets: React.FC<{
+export const SizeInputWithPresets: React.FC<{
   label: string;
   value: string;
   onChange: (val: string) => void;

@@ -13,16 +13,10 @@ import {
 } from 'lucide-react';
 import { getImageUrl } from '../lib/cloudinary';
 import { ImageUploader } from '../components/ImageUploader';
-import { BlockBuilder } from '../components/BlockBuilder';
+import { BlockBuilder, SizeInputWithPresets } from '../components/BlockBuilder';
+import { parseDescSize, DescSizes } from '../lib/descSize';
 import { Block, spacingStyle } from '../components/ProjectPreview';
 import { CustomSelect } from '../components/CustomSelect';
-
-// Mismos tamaños que la bajada en LabDetalle de la web.
-const DESC_SIZES = {
-  sm: 'text-base md:text-lg',
-  md: 'text-lg md:text-xl',
-  lg: 'text-xl md:text-2xl',
-} as const;
 
 interface ArticleEditorProps {
   initialArticle?: CraftLabArticle | null;
@@ -49,6 +43,9 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
   });
 
   const [activeTab, setActiveTab] = useState<'editor' | 'preview'>('editor');
+  const descSizes = parseDescSize(formData.desc_size);
+  const setDescSize = (device: keyof DescSizes, value: string) =>
+    setFormData({ ...formData, desc_size: JSON.stringify({ ...descSizes, [device]: value }) });
   const [previewDevice, setPreviewDevice] = useState<'desktop' | 'tablet' | 'mobile'>('desktop');
   const [saving, setSaving] = useState(false);
   const [feedback, setFeedback] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
@@ -275,7 +272,10 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
                   <h1 className="text-3xl md:text-5xl font-serif font-normal text-[#000000] tracking-tight leading-tight">
                     {formData.title || 'Título del Artículo'}
                   </h1>
-                  <p className={`${DESC_SIZES[formData.desc_size || 'lg']} text-[#666666] italic font-serif`}>
+                  <p
+                    className={`${descSizes[previewDevice].startsWith('text-') ? descSizes[previewDevice] : ''} text-[#666666] italic font-serif`}
+                    style={descSizes[previewDevice].startsWith('text-') ? undefined : { fontSize: descSizes[previewDevice] }}
+                  >
                     {formData.desc}
                   </p>
                 </div>
@@ -415,15 +415,11 @@ export const ArticleEditor: React.FC<ArticleEditorProps> = ({
 
             <div>
               <label className="block text-xs font-medium text-[#666666] mb-1.5">Tamaño de la Bajada dentro de la Nota</label>
-              <CustomSelect
-                value={formData.desc_size || 'lg'}
-                onChange={(v) => setFormData({ ...formData, desc_size: v as 'sm' | 'md' | 'lg' })}
-                options={[
-                  { value: 'lg', label: 'Grande' },
-                  { value: 'md', label: 'Mediana' },
-                  { value: 'sm', label: 'Chica' },
-                ]}
-              />
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                <SizeInputWithPresets label="Tamaño Mobile" value={descSizes.mobile} onChange={(v) => setDescSize('mobile', v)} />
+                <SizeInputWithPresets label="Tamaño Tablet" value={descSizes.tablet} onChange={(v) => setDescSize('tablet', v)} />
+                <SizeInputWithPresets label="Tamaño Desktop" value={descSizes.desktop} onChange={(v) => setDescSize('desktop', v)} />
+              </div>
               <p className="mt-1.5 text-[11px] text-[#666666]">En la grilla de Craft Lab no cambia.</p>
             </div>
 

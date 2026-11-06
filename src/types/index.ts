@@ -163,8 +163,8 @@ export type CraftLabArticle = {
   category: string;
   image: string;
   desc: string;
-  /** Tamaño de la bajada dentro de la nota (en la grilla no cambia). */
-  desc_size?: 'sm' | 'md' | 'lg';
+  /** Tamaño de la bajada dentro de la nota por dispositivo, como JSON (ver lib/descSize). */
+  desc_size?: string;
   aspect?: string;
   /** false oculta la portada dentro de la nota (en la grilla se sigue usando). */
   show_cover?: boolean;

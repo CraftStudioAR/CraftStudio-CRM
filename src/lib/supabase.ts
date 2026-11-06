@@ -437,7 +437,7 @@ export async function saveArticle(article: CraftLabArticle): Promise<SaveResult<
       category: article.category,
       image: article.image,
       desc: article.desc,
-      desc_size: article.desc_size || 'lg',
+      desc_size: article.desc_size || null,
       aspect: article.aspect || 'aspect-[4/5]',
       show_cover: article.show_cover !== false,
       content: article.content,
